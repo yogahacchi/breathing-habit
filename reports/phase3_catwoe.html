@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Serif+JP:wght@400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#FAF8F4;color:#1E1E1C;font-family:'Noto Sans JP',sans-serif;padding:40px 24px;}
+.container{max-width:980px;margin:0 auto;}
+
+.header{text-align:center;margin-bottom:48px;padding:40px;border:1px solid rgba(42,122,111,0.2);background:rgba(42,122,111,0.02);position:relative;}
+.header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#2A7A6F,transparent);}
+.eyebrow{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.35em;color:#C4602A;text-transform:uppercase;margin-bottom:12px;}
+.main-title{font-size:26px;font-weight:700;letter-spacing:0.05em;margin-bottom:8px;}
+.sub{font-family:'Cormorant Garamond',serif;font-size:15px;color:#6B6A66;font-style:italic;}
+
+.section-title{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.3em;color:#C4602A;text-transform:uppercase;margin-bottom:24px;display:flex;align-items:center;gap:12px;}
+.section-title::after{content:'';flex:1;height:1px;background:#E0DAD0;}
+.section{margin-bottom:52px;}
+
+/* CATWOE cards */
+.catwoe-list{display:flex;flex-direction:column;gap:3px;margin-bottom:40px;}
+.catwoe-card{display:grid;grid-template-columns:220px 1fr;background:#F0EBE0;border-left:3px solid transparent;transition:all 0.2s;}
+.c-card{border-color:#2A7A6F;}
+.a-card{border-color:#2A7A6F;}
+.t-card{border-color:#C4602A;}
+.w-card{border-color:#C4602A;}
+.o-card{border-color:#C4602A;}
+.e-card{border-color:#C4602A;}
+
+.catwoe-left{padding:28px 24px;border-right:1px solid rgba(0,0,0,0.06);}
+.letter{font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:600;line-height:1;margin-bottom:4px;}
+.c-card .letter{color:#2A7A6F;}
+.a-card .letter{color:#2A7A6F;}
+.t-card .letter{color:#C4602A;}
+.w-card .letter{color:#C4602A;}
+.o-card .letter{color:#C4602A;}
+.e-card .letter{color:#C4602A;}
+
+.letter-word{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.2em;color:#B8B3AE;text-transform:uppercase;}
+.letter-ja{font-size:11px;color:#9A9590;margin-top:2px;}
+
+.catwoe-right{padding:28px 32px;}
+.catwoe-question{font-size:10px;color:#9A9590;letter-spacing:0.1em;margin-bottom:12px;font-family:'Space Mono',monospace;}
+.catwoe-answer{font-size:15px;font-weight:500;color:#1E1E1C;line-height:1.5;margin-bottom:12px;}
+.catwoe-detail{font-size:12px;color:#6B6A66;line-height:1.8;}
+.catwoe-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+.tag{font-size:9px;border:1px solid rgba(0,0,0,0.08);color:#9A9590;padding:3px 10px;font-family:'Space Mono',monospace;letter-spacing:0.08em;}
+.tag-gold{border-color:rgba(42,122,111,0.3);color:#2A7A6F;}
+
+/* Root Definition */
+.root-def{background:rgba(42,122,111,0.04);border:1px solid rgba(42,122,111,0.25);padding:32px;margin-bottom:48px;position:relative;overflow:hidden;}
+.root-def::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#2A7A6F,transparent);}
+.root-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.3em;color:#2A7A6F;text-transform:uppercase;margin-bottom:16px;}
+.root-text{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:#1A5049;line-height:1.7;letter-spacing:0.02em;}
+.root-text strong{color:#2A7A6F;font-weight:600;}
+.root-en{font-size:11px;color:#A8A39E;margin-top:16px;line-height:1.7;font-style:italic;font-family:'Cormorant Garamond',serif;}
+
+/* Value map */
+.value-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px;}
+.value-card{background:#F0EBE0;border:1px solid rgba(0,0,0,0.07);padding:24px;text-align:center;position:relative;overflow:hidden;}
+.value-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;}
+.vc1::after{background:linear-gradient(90deg,transparent,#2A7A6F,transparent);}
+.vc2::after{background:linear-gradient(90deg,transparent,#2A7A6F,transparent);}
+.vc3::after{background:linear-gradient(90deg,transparent,#C4602A,transparent);}
+.value-icon{font-size:28px;margin-bottom:10px;}
+.value-title{font-size:13px;font-weight:700;color:#1E1E1C;margin-bottom:8px;}
+.value-body{font-size:11px;color:#6B6A66;line-height:1.7;}
+
+/* Concept catchcopy */
+.copy-section{margin-bottom:48px;}
+.copy-card{background:#F0EBE0;border:1px solid rgba(0,0,0,0.07);padding:28px 32px;margin-bottom:16px;display:flex;gap:24px;align-items:flex-start;}
+.copy-num{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:#2A7A6F;min-width:32px;line-height:1;}
+.copy-content{}
+.copy-main{font-size:18px;font-weight:700;color:#1A5049;margin-bottom:8px;line-height:1.4;}
+.copy-sub{font-size:12px;color:#6B6A66;line-height:1.7;}
+.copy-target{font-size:10px;font-family:'Space Mono',monospace;color:#C4602A;margin-top:8px;letter-spacing:0.1em;}
+
+/* Persona detail */
+.persona-detail{background:#F0EBE0;border:1px solid rgba(0,0,0,0.07);padding:28px;margin-bottom:16px;}
+.persona-header{display:flex;align-items:center;gap:16px;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid rgba(0,0,0,0.06);}
+.persona-avatar{width:52px;height:52px;border-radius:50%;background:rgba(42,122,111,0.1);border:1px solid rgba(42,122,111,0.2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.persona-meta{}
+.persona-name{font-size:15px;font-weight:700;color:#1E1E1C;margin-bottom:4px;}
+.persona-attr{font-size:10px;color:#9A9590;font-family:'Space Mono',monospace;letter-spacing:0.08em;}
+.persona-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.persona-block-title{font-size:9px;font-family:'Space Mono',monospace;color:#A8A39E;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;}
+.persona-block-body{font-size:12px;color:#6B6A66;line-height:1.7;}
+
+/* insight */
+.insight{background:rgba(42,122,111,0.05);border-left:3px solid #2A7A6F;padding:16px 20px;margin-bottom:12px;}
+.insight-title{font-size:12px;font-weight:700;color:#C4602A;margin-bottom:6px;}
+.insight-body{font-size:12px;color:#6B6A66;line-height:1.7;}
+
+/* conflict check */
+.conflict-table{width:100%;border-collapse:collapse;}
+.conflict-table th{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.15em;color:#A8A39E;padding:8px 12px;text-align:left;border-bottom:1px solid rgba(0,0,0,0.07);}
+.conflict-table td{font-size:12px;color:#6B6A66;padding:12px;border-bottom:1px solid rgba(0,0,0,0.04);vertical-align:top;line-height:1.5;}
+.conflict-table tr:last-child td{border-bottom:none;}
+.ok{color:#2A7A6F;font-size:11px;font-family:'Space Mono',monospace;}
+.ng{color:#C4602A;font-size:11px;font-family:'Space Mono',monospace;}
+.warn{color:#C4602A;font-size:11px;font-family:'Space Mono',monospace;}
+
+/* next */
+.next{background:#F0EBE0;border:1px solid rgba(42,122,111,0.2);padding:28px;margin-top:40px;}
+.next-title{font-size:14px;font-weight:700;color:#C4602A;margin-bottom:20px;}
+.next-item{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.06);}
+.next-item:last-child{border-bottom:none;}
+.next-num{font-family:'Space Mono',monospace;font-size:11px;color:#2A7A6F;min-width:24px;margin-top:2px;}
+.next-text{font-size:13px;color:#6B6A66;line-height:1.6;}
+.next-phase{font-size:9px;color:#C4602A;font-family:'Space Mono',monospace;margin-top:4px;letter-spacing:0.1em;}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="eyebrow">Phase 03 — Concept Design Report</div>
+    <div class="main-title">呼吸習慣プロジェクト｜CATWOE分析 ＆ コンセプト設計</div>
+    <div class="sub">Who is it for? What changes? Why does it exist? ／ asa AI Lab</div>
+  </div>
+
+  <!-- CATWOE 6軸 -->
+  <div class="section">
+    <div class="section-title">01 ｜ CATWOE 6軸の定義</div>
+    <div class="catwoe-list">
+
+      <!-- C: Customer -->
+      <div class="catwoe-card c-card">
+        <div class="catwoe-left">
+          <div class="letter">C</div>
+          <div class="letter-word">Customer</div>
+          <div class="letter-ja">顧客・受益者</div>
+        </div>
+        <div class="catwoe-right">
+          <div class="catwoe-question">誰がこのサービスから価値を受け取るか？</div>
+          <div class="catwoe-answer">呼吸法を「わかってはいるけど続けられない」30〜50代女性</div>
+          <div class="catwoe-detail">
+            ヨガ生徒をコアとしながら、将来はクラス未参加者にも展開。共通点は「ウェルネスへの関心は高いが習慣化でつまずいている」という状態。アンケートで明確になった3タイプ（忙しい実践者・やり方迷子・まだ本気じゃない層）それぞれに届く設計が必要。
+          </div>
+          <div class="catwoe-tags">
+            <span class="tag tag-gold">ヨガ生徒（既存）</span>
+            <span class="tag tag-gold">30〜50代女性</span>
+            <span class="tag">ウェルネス関心層</span>
+            <span class="tag">習慣化挫折経験者</span>
+            <span class="tag">将来：クラス未参加者</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- A: Actor -->
+      <div class="catwoe-card a-card">
+        <div class="catwoe-left">
+          <div class="letter">A</div>
+          <div class="letter-word">Actor</div>
+          <div class="letter-ja">実行者・運営者</div>
+        </div>
+        <div class="catwoe-right">
+          <div class="catwoe-question">誰がこのシステムを動かすか？</div>
+          <div class="catwoe-answer">とっとさん（asa AI Lab）＋ AIツール・自動化の組み合わせ</div>
+          <div class="catwoe-detail">
+            当面はとっとさん一人が設計・運営・コンテンツ作成を担う。ただし「一人でできる範囲」を超えないよう、DifyやGAS・LINEリマインダー等で自動化できる部分は積極的に委ねる。将来的には他のインストラクターとの協業も視野に入れ、「プラットフォーム化」への拡張性を意識した設計にする。
+          </div>
+          <div class="catwoe-tags">
+            <span class="tag tag-gold">とっとさん（ヨガ×DX）</span>
+            <span class="tag">Dify / GAS 自動化</span>
+            <span class="tag">LINE配信</span>
+            <span class="tag">将来：他インストラクター</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- T: Transformation -->
+      <div class="catwoe-card t-card">
+        <div class="catwoe-left">
+          <div class="letter">T</div>
+          <div class="letter-word">Transformation</div>
+          <div class="letter-ja">変革・変換</div>
+        </div>
+        <div class="catwoe-right">
+          <div class="catwoe-question">インプットをアウトプットにどう変えるか？</div>
+          <div class="catwoe-answer">「やりたいけど続かない状態」→「呼吸法が日常の一部になった状態」</div>
+          <div class="catwoe-detail">
+            <strong style="color:#2A3A38;">INPUT：</strong>呼吸法への関心・意欲はあるが、忘れる・やり方が不安・一人では続かないという障壁を抱えた状態<br>
+            <strong style="color:#2A3A38;">PROCESS：</strong>リマインダーで思い出させる → 動画ガイドでやり方を安心させる → 記録で達成感を与える → 先生の言葉で繋がりを感じさせる<br>
+            <strong style="color:#2A3A38;">OUTPUT：</strong>呼吸法が「やらなければいけないもの」ではなく「自分のための時間」として定着している状態
+          </div>
+          <div class="catwoe-tags">
+            <span class="tag">障壁の除去</span>
+            <span class="tag tag-gold">習慣の定着</span>
+            <span class="tag">自己効力感の向上</span>
+            <span class="tag">セルフケアの内面化</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- W: Worldview -->
+      <div class="catwoe-card w-card">
+        <div class="catwoe-left">
+          <div class="letter">W</div>
+          <div class="letter-word">Worldview</div>
+          <div class="letter-ja">世界観・信念</div>
+        </div>
+        <div class="catwoe-right">
+          <div class="catwoe-question">このサービスが成立する「前提となる信念」は何か？</div>
+          <div class="catwoe-answer">「呼吸は、誰でも今日から変えられる最も身近なセルフケアである」</div>
+          <div class="catwoe-detail">
+            習慣化が難しいのは意志が弱いからではなく、「仕組みと伴走がないから」という信念がこのサービスの根底にある。また「信頼できる人から学ぶと、人は続けられる」という確信も重要。とっとさんのアロマ・ホリスティック・アーユルヴェーダの世界観と掛け合わせ、「呼吸は薬でも義務でもなく、自分を整えるための最小の儀式」という価値観を届ける。
+          </div>
+          <div class="catwoe-tags">
+            <span class="tag tag-gold">呼吸＝最小のセルフケア</span>
+            <span class="tag tag-gold">仕組みが人を変える</span>
+            <span class="tag">信頼が継続を生む</span>
+            <span class="tag">ホリスティックな視点</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- O: Owner -->
+      <div class="catwoe-card o-card">
+        <div class="catwoe-left">
+          <div class="letter">O</div>
+          <div class="letter-word">Owner</div>
+          <div class="letter-ja">意思決定者・責任者</div>
+        </div>
+        <div class="catwoe-right">
+          <div class="catwoe-question">誰がこのシステムの方向性を決め、止める権限を持つか？</div>
+          <div class="catwoe-answer">とっとさん（asa AI Lab）が唯一の意思決定者</div>
+          <div class="catwoe-detail">
+            現時点ではとっとさん一人がオーナー。これは強みでもある（意思決定が速い・ブレない）一方、リスクでもある（一人が倒れたらサービスが止まる）。MVP期間中は「とっとさんにしかできないこと（動画・世界観・生徒との信頼）」と「自動化できること（リマインダー・記録集計）」を明確に分け、ボトルネックを最小化する。将来のプラットフォーム化も視野に入れ、オーナーとしての判断軸を今から言語化しておく。
+          </div>
+          <div class="catwoe-tags">
+            <span class="tag tag-gold">asa AI Lab</span>
+            <span class="tag">単独オーナー</span>
+            <span class="tag">意思決定の速さが武器</span>
+            <span class="tag">将来：共同運営も視野</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- E: Environment -->
+      <div class="catwoe-card e-card">
+        <div class="catwoe-left">
+          <div class="letter">E</div>
+          <div class="letter-word">Environment</div>
+          <div class="letter-ja">環境・制約条件</div>
+        </div>
+        <div class="catwoe-right">
+          <div class="catwoe-question">このサービスが動く「外部環境と制約」は何か？</div>
+          <div class="catwoe-answer">一人運営リソース・沖縄拠点・スマホ前提・低価格スタート</div>
+          <div class="catwoe-detail">
+            <strong style="color:#2A3A38;">リソース制約：</strong>ヨガ指導・コンサル・アプリ開発を並行するため、週あたりの運営工数を最初から設計する必要がある<br>
+            <strong style="color:#2A3A38;">地理的環境：</strong>沖縄拠点は対面コミュニティの強みになるが、全国展開にはオンライン設計が必須<br>
+            <strong style="color:#2A3A38;">技術環境：</strong>ユーザーはスマホ中心。アプリよりLINEの方が摩擦が少ない（MVP期間）<br>
+            <strong style="color:#2A3A38;">価格制約：</strong>最初は無料〜低価格。有料化は「続いた実績」を見せてから
+          </div>
+          <div class="catwoe-tags">
+            <span class="tag">一人運営</span>
+            <span class="tag">沖縄拠点</span>
+            <span class="tag tag-gold">スマホ・LINE前提</span>
+            <span class="tag">無料→低価格スタート</span>
+            <span class="tag">工数制限あり</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Root Definition -->
+  <div class="section">
+    <div class="section-title">02 ｜ ルート定義（Root Definition）</div>
+    <div class="root-def">
+      <div class="root-label">Root Definition — このサービスの本質的な存在意義</div>
+      <div class="root-text">
+        <strong>asa AI Lab（とっとさん）</strong>が運営する、<br>
+        呼吸法を習慣にしたい<strong>30〜50代女性</strong>のために、<br>
+        「忘れる・やり方が不安・一人では続かない」という障壁を<br>
+        <strong>リマインダー × ガイド動画 × 記録 × インストラクターの伴走</strong>で取り除き、<br>
+        呼吸法が「義務」ではなく<strong>「自分を整える日常の儀式」</strong>として根付く状態をつくる、<br>
+        インストラクター主導型の習慣化プラットフォーム。
+      </div>
+      <div class="root-en">
+        A habit-formation platform led by a trusted yoga instructor,<br>
+        designed to transform "I want to but can't continue" into "breathing is my daily ritual."
+      </div>
+    </div>
+
+    <!-- 価値の3層 -->
+    <div class="value-grid">
+      <div class="value-card vc1">
+        <div class="value-icon">🫁</div>
+        <div class="value-title">機能的価値</div>
+        <div class="value-body">呼吸法を毎日続けられる仕組みが手に入る。リマインダー・ガイド・記録で「忘れる・わからない・続かない」が解消される。</div>
+      </div>
+      <div class="value-card vc2">
+        <div class="value-icon">🌿</div>
+        <div class="value-title">感情的価値</div>
+        <div class="value-body">「先生が一緒にいる」安心感。一人じゃないという繋がりと、続けている自分への自信と達成感。</div>
+      </div>
+      <div class="value-card vc3">
+        <div class="value-icon">✨</div>
+        <div class="value-title">自己実現価値</div>
+        <div class="value-body">「自分を大切にできる人」になれる。呼吸が整うことで、ストレス・睡眠・集中力が変わり、生き方が変わる体験。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- キャッチコピー3案 -->
+  <div class="section">
+    <div class="section-title">03 ｜ コンセプトキャッチコピー 3案</div>
+    <div class="copy-section">
+      <div class="copy-card">
+        <div class="copy-num">1</div>
+        <div class="copy-content">
+          <div class="copy-main">息を整えると、生き方が整う。</div>
+          <div class="copy-sub">呼吸法を「習慣」にするための、先生と歩む仕組みがここにあります。短い時間でいい。毎日続けるための、あなただけのサポートを。</div>
+          <div class="copy-target">→ 感情的価値重視 ／ 既存生徒・ウェルネス関心層向け</div>
+        </div>
+      </div>
+      <div class="copy-card">
+        <div class="copy-num">2</div>
+        <div class="copy-content">
+          <div class="copy-main">「続かない」のは、意志のせいじゃない。</div>
+          <div class="copy-sub">仕組みがなかっただけ。リマインダー、ガイド動画、記録、そして先生からの言葉。呼吸法を日常にするための4つの柱が、あなたを支えます。</div>
+          <div class="copy-target">→ 問題解決訴求 ／ 習慣化挫折経験者向け</div>
+        </div>
+      </div>
+      <div class="copy-card">
+        <div class="copy-num">3</div>
+        <div class="copy-content">
+          <div class="copy-main">呼吸は、今日から変えられる最小のセルフケア。</div>
+          <div class="copy-sub">道具もお金も時間もいらない。あるのは先生との繋がりと、続けるための仕組みだけ。沖縄から届ける、あなただけの呼吸習慣。</div>
+          <div class="copy-target">→ 世界観訴求 ／ 新規ユーザー・Instagram流入向け</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ペルソナ詳細 -->
+  <div class="section">
+    <div class="section-title">04 ｜ ペルソナ詳細（CATWOEのC軸を深掘り）</div>
+
+    <div class="persona-detail">
+      <div class="persona-header">
+        <div class="persona-avatar">🏃</div>
+        <div class="persona-meta">
+          <div class="persona-name">忙しい実践者タイプ ／ Aさん（40代・ヨガ歴3年）</div>
+          <div class="persona-attr">3人 / 最優先ターゲット / アプリ「ぜひ使いたい」</div>
+        </div>
+      </div>
+      <div class="persona-grid">
+        <div>
+          <div class="persona-block-title">Pain（今の痛み）</div>
+          <div class="persona-block-body">クラス直後はやる気があるのに、日常に戻ると完全に忘れてしまう。「大切だとわかっている」のに続かない自分に罪悪感を感じている。</div>
+        </div>
+        <div>
+          <div class="persona-block-title">Gain（得たいもの）</div>
+          <div class="persona-block-body">「今日もできた」という小さな達成感の積み重ね。先生との繋がりを感じながら、自分ペースで続けられる安心感。</div>
+        </div>
+        <div>
+          <div class="persona-block-title">Key Feature（刺さる機能）</div>
+          <div class="persona-block-body">朝のリマインダー通知、記録カレンダー、先生からの週1メッセージ。「3分でできる呼吸法」という短時間設計。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="persona-detail">
+      <div class="persona-header">
+        <div class="persona-avatar">🤔</div>
+        <div class="persona-meta">
+          <div class="persona-name">やり方迷子タイプ ／ Bさん（50代・ヨガ歴1〜2年）</div>
+          <div class="persona-attr">2人 / 動画ガイドが最重要 / アプリ「内容次第」</div>
+        </div>
+      </div>
+      <div class="persona-grid">
+        <div>
+          <div class="persona-block-title">Pain（今の痛み）</div>
+          <div class="persona-block-body">「あっているかわからない」という不安が行動を阻む。YouTubeで試したが結局よくわからなかった。一人でやると自信が持てない。</div>
+        </div>
+        <div>
+          <div class="persona-block-title">Gain（得たいもの）</div>
+          <div class="persona-block-body">「これで合ってる」という安心感。先生の声で導いてもらえる体験。「何分やればいいか」という明確な基準。</div>
+        </div>
+        <div>
+          <div class="persona-block-title">Key Feature（刺さる機能）</div>
+          <div class="persona-block-body">とっとさんの顔出し動画ガイド（3分・5分・10分バージョン）、正しい呼吸法のチェックリスト、質問できる仕組み。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="persona-detail">
+      <div class="persona-header">
+        <div class="persona-avatar">💭</div>
+        <div class="persona-meta">
+          <div class="persona-name">まだ本気じゃない層 ／ Cさん（30〜40代・ヨガ歴1〜3年）</div>
+          <div class="persona-attr">2人 / 楽しさから入る設計が必要 / アプリ「内容次第」</div>
+        </div>
+      </div>
+      <div class="persona-grid">
+        <div>
+          <div class="persona-block-title">Pain（今の痛み）</div>
+          <div class="persona-block-body">「なんとなくやりたい」が具体的な動機になっていない。効果を実感できないため優先度が上がらない。面倒に感じる自分がいる。</div>
+        </div>
+        <div>
+          <div class="persona-block-title">Gain（得たいもの）</div>
+          <div class="persona-block-body">楽しみながら気づいたら習慣になっていた体験。仲間や先生との繋がり感。続けた先の自分の変化。</div>
+        </div>
+        <div>
+          <div class="persona-block-title">Key Feature（刺さる機能）</div>
+          <div class="persona-block-body">ストリーク（連続記録）のゲーミフィケーション、仲間と一緒に取り組む仕組み、小さな成功体験の可視化。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 整合性チェック -->
+  <div class="section">
+    <div class="section-title">05 ｜ CATWOE整合性チェック</div>
+    <table class="conflict-table">
+      <tr>
+        <th>軸</th>
+        <th>問い</th>
+        <th>判定</th>
+        <th>コメント</th>
+      </tr>
+      <tr>
+        <td>C vs T</td>
+        <td>変革内容はCのニーズと一致しているか？</td>
+        <td><span class="ok">✓ OK</span></td>
+        <td>「忘れる・わからない・続かない」という3障壁の除去はアンケート実証済み</td>
+      </tr>
+      <tr>
+        <td>A vs E</td>
+        <td>実行者のリソースは環境制約と合っているか？</td>
+        <td><span class="warn">△ 要注意</span></td>
+        <td>一人運営×ヨガ指導×コンサル並行は工数オーバーのリスクあり。自動化ラインの設計が必須。</td>
+      </tr>
+      <tr>
+        <td>W vs C</td>
+        <td>世界観はCが共感できるものか？</td>
+        <td><span class="ok">✓ OK</span></td>
+        <td>「呼吸＝最小のセルフケア」はアンケートの自由記述でも生徒が言語化していた価値観と一致</td>
+      </tr>
+      <tr>
+        <td>O vs E</td>
+        <td>オーナーは環境制約を認識しているか？</td>
+        <td><span class="ok">✓ OK</span></td>
+        <td>MVP段階で機能を3つに絞る判断はSWOT分析で合意済み</td>
+      </tr>
+      <tr>
+        <td>T vs E</td>
+        <td>変革はリソース制約内で実現可能か？</td>
+        <td><span class="warn">△ 要注意</span></td>
+        <td>動画コンテンツ制作に時間がかかる。最初は1〜2本に絞り、徐々に追加する段階的設計を推奨。</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Next Steps -->
+  <div class="next">
+    <div class="next-title">→ Next Steps ｜ Phase 4（KGI / KPI / KDI設計）へ</div>
+    <div class="next-item">
+      <div class="next-num">01</div>
+      <div>
+        <div class="next-text">3つのキャッチコピー案から1つを選ぶ（または合体させる）。Instagramのプロフィール・ハイライトに反映する</div>
+        <div class="next-phase">PHASE 03 完了 ／ 今週中</div>
+      </div>
+    </div>
+    <div class="next-item">
+      <div class="next-num">02</div>
+      <div>
+        <div class="next-text">「一人運営の工数制限」を具体的に数値化する（週何時間をこのプロジェクトに使えるか）</div>
+        <div class="next-phase">PHASE 04 の前提条件</div>
+      </div>
+    </div>
+    <div class="next-item">
+      <div class="next-num">03</div>
+      <div>
+        <div class="next-text">KGI（最終ゴール）→ KPI（プロセス指標）→ KDI（日々の行動）の3層で「成功の定義」を数値化する</div>
+        <div class="next-phase">→ PHASE 04</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

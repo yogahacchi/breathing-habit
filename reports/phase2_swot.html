@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Serif+JP:wght@400;500&family=Noto+Sans+JP:wght@300;400;500:ital,wght@0,400;0,600;1,400&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#FAF8F4;color:#1E1E1C;font-family:'Noto Sans JP',sans-serif;padding:40px 24px;}
+.container{max-width:980px;margin:0 auto;}
+
+.header{text-align:center;margin-bottom:48px;padding:40px;border:1px solid rgba(42,122,111,0.2);background:rgba(42,122,111,0.02);position:relative;}
+.header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#2A7A6F,transparent);}
+.eyebrow{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.35em;color:#C4602A;text-transform:uppercase;margin-bottom:12px;}
+.main-title{font-size:26px;font-weight:700;letter-spacing:0.05em;margin-bottom:8px;}
+.sub{font-family:'Cormorant Garamond',serif;font-size:15px;color:#6B6A66;font-style:italic;}
+
+.section-title{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.3em;color:#C4602A;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:12px;}
+.section-title::after{content:'';flex:1;height:1px;background:#E0DAD0;}
+.section{margin-bottom:48px;}
+
+/* Market banner */
+.market-banner{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:48px;}
+.m-card{background:#F0EBE0;border:1px solid rgba(42,122,111,0.15);padding:20px;text-align:center;}
+.m-num{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;color:#2A7A6F;line-height:1;}
+.m-label{font-size:11px;color:#6B6A66;margin-top:6px;letter-spacing:0.06em;}
+.m-src{font-size:9px;color:#B8B3AE;margin-top:4px;font-family:'Space Mono',monospace;}
+
+/* SWOT grid */
+.swot-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;background:rgba(0,0,0,0.06);margin-bottom:48px;}
+.swot-cell{background:#F0EBE0;padding:28px;}
+.swot-header{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.swot-badge{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.2em;padding:4px 12px;border-radius:2px;text-transform:uppercase;}
+.s-badge{background:rgba(42,122,111,0.1);border:1px solid rgba(42,122,111,0.3);color:#2A7A6F;}
+.w-badge{background:rgba(196,96,42,0.1);border:1px solid rgba(196,96,42,0.3);color:#C4602A;}
+.o-badge{background:rgba(42,122,111,0.1);border:1px solid rgba(42,122,111,0.3);color:#2A7A6F;}
+.t-badge{background:rgba(196,96,42,0.1);border:1px solid rgba(196,96,42,0.3);color:#C4602A;}
+.swot-title{font-size:14px;font-weight:700;color:#1E1E1C;}
+
+.swot-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(0,0,0,0.06);}
+.swot-item:last-child{border-bottom:none;}
+.item-rank{font-family:'Space Mono',monospace;font-size:10px;color:#A8A39E;min-width:20px;}
+.item-main{font-size:13px;color:#2A3A38;line-height:1.5;}
+.item-sub{font-size:11px;color:#9A9590;margin-top:3px;line-height:1.4;}
+
+/* Cross SWOT */
+.cross-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.cross-card{background:#F0EBE0;border:1px solid rgba(0,0,0,0.07);padding:24px;position:relative;overflow:hidden;}
+.cross-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;}
+.so-card::before{background:#2A7A6F;}
+.st-card::before{background:#C4602A;}
+.wo-card::before{background:#2A7A6F;}
+.wt-card::before{background:#C4602A;}
+
+.cross-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:12px;}
+.so-label{color:#2A7A6F;}
+.st-label{color:#C4602A;}
+.wo-label{color:#2A7A6F;}
+.wt-label{color:#C4602A;}
+
+.cross-title{font-size:15px;font-weight:700;color:#1E1E1C;margin-bottom:10px;line-height:1.3;}
+.cross-body{font-size:12px;color:#6B6A66;line-height:1.8;}
+.cross-action{margin-top:14px;padding-top:14px;border-top:1px solid rgba(0,0,0,0.06);}
+.action-label{font-size:9px;font-family:'Space Mono',monospace;color:#A8A39E;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px;}
+.action-item{font-size:11px;color:#6B6A66;padding:4px 0;display:flex;gap:8px;}
+.action-item::before{content:'→';color:#2A7A6F;flex-shrink:0;}
+
+/* Competitor */
+.comp-table{width:100%;border-collapse:collapse;margin-bottom:16px;}
+.comp-table th{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.15em;color:#A8A39E;text-transform:uppercase;padding:8px 12px;text-align:left;border-bottom:1px solid rgba(0,0,0,0.07);}
+.comp-table td{font-size:12px;color:#6B6A66;padding:10px 12px;border-bottom:1px solid rgba(0,0,0,0.04);vertical-align:top;line-height:1.5;}
+.comp-table tr:last-child td{border-bottom:none;}
+.comp-name{color:#2A3A38;font-weight:500;}
+.gap-good{color:#2A7A6F;font-size:10px;}
+.gap-bad{color:#C4602A;font-size:10px;}
+.diff-highlight{background:rgba(42,122,111,0.08);border:1px solid rgba(42,122,111,0.2);color:#2A7A6F;font-size:11px;padding:3px 8px;display:inline-block;margin-top:4px;}
+
+/* Strategy priority */
+.priority-list{display:flex;flex-direction:column;gap:12px;}
+.p-item{background:#F0EBE0;border:1px solid rgba(0,0,0,0.07);padding:20px;display:flex;gap:20px;align-items:flex-start;}
+.p-num{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;color:#2A7A6F;line-height:1;min-width:40px;}
+.p-content{}
+.p-title{font-size:14px;font-weight:700;color:#1E1E1C;margin-bottom:6px;}
+.p-body{font-size:12px;color:#6B6A66;line-height:1.7;}
+.p-phase{font-family:'Space Mono',monospace;font-size:9px;color:#C4602A;margin-top:8px;letter-spacing:0.1em;}
+
+/* Monetize */
+.mono-flow{display:flex;align-items:center;gap:0;margin-bottom:24px;flex-wrap:wrap;}
+.mono-step{background:#F0EBE0;border:1px solid rgba(0,0,0,0.07);padding:18px 20px;flex:1;min-width:180px;}
+.mono-arrow{color:#2A7A6F;font-size:20px;padding:0 8px;font-family:'Space Mono',monospace;}
+.mono-phase{font-family:'Space Mono',monospace;font-size:8px;color:#A8A39E;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;}
+.mono-title{font-size:13px;font-weight:700;color:#1E1E1C;margin-bottom:4px;}
+.mono-price{font-size:11px;color:#2A7A6F;}
+.mono-target{font-size:10px;color:#9A9590;margin-top:4px;}
+
+/* insight */
+.insight{background:rgba(42,122,111,0.05);border-left:3px solid #2A7A6F;padding:16px 20px;margin-bottom:12px;}
+.insight-title{font-size:12px;font-weight:700;color:#C4602A;margin-bottom:6px;}
+.insight-body{font-size:12px;color:#6B6A66;line-height:1.7;}
+
+/* next */
+.next{background:#F0EBE0;border:1px solid rgba(42,122,111,0.2);padding:28px;margin-top:40px;}
+.next-title{font-size:14px;font-weight:700;color:#C4602A;margin-bottom:20px;}
+.next-item{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.06);}
+.next-item:last-child{border-bottom:none;}
+.next-num{font-family:'Space Mono',monospace;font-size:11px;color:#2A7A6F;min-width:24px;margin-top:2px;}
+.next-text{font-size:13px;color:#6B6A66;line-height:1.6;}
+.next-phase{font-size:9px;color:#C4602A;font-family:'Space Mono',monospace;margin-top:4px;letter-spacing:0.1em;}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="eyebrow">Phase 02 — Strategic Analysis Report</div>
+    <div class="main-title">呼吸習慣プロジェクト｜SWOT分析 ＆ クロス戦略</div>
+    <div class="sub">Market Research × Self Resource × Competitor Analysis ／ asa AI Lab</div>
+  </div>
+
+  <!-- 市場環境 -->
+  <div class="section">
+    <div class="section-title">00 ｜ 市場環境（外部データ）</div>
+    <div class="market-banner">
+      <div class="m-card">
+        <div class="m-num">14%</div>
+        <div class="m-label">習慣化アプリ市場 年成長率（CAGR）</div>
+        <div class="m-src">2025〜2033 グローバル予測</div>
+      </div>
+      <div class="m-card">
+        <div class="m-num">7兆円</div>
+        <div class="m-label">日本の自己投資産業市場規模</div>
+        <div class="m-src">うちモチベーション管理は2兆円</div>
+      </div>
+      <div class="m-card">
+        <div class="m-num">150万人</div>
+        <div class="m-label">「みんチャレ」国内ユーザー数</div>
+        <div class="m-src">習慣化×コミュニティ需要の証明</div>
+      </div>
+    </div>
+    <div class="insight">
+      <div class="insight-title">📈 市場の追い風</div>
+      <div class="insight-body">AI・ゲーミフィケーション・コミュニティ機能を統合した習慣化アプリが世界的に急成長中。日本でも自己投資市場は7兆円規模で、ウェルネス×テクノロジーの融合領域は特に伸びしろが大きい。インストラクター主導の「信頼ベース習慣化」というニッチはまだ競合が少ない。</div>
+    </div>
+  </div>
+
+  <!-- SWOT -->
+  <div class="section">
+    <div class="section-title">01 ｜ SWOT分析</div>
+    <div class="swot-grid">
+
+      <!-- Strength -->
+      <div class="swot-cell">
+        <div class="swot-header">
+          <span class="swot-badge s-badge">Strength</span>
+          <span class="swot-title">強み</span>
+        </div>
+        <div class="swot-item"><div class="item-rank">S1</div><div><div class="item-main">ヨガ指導歴・生徒との深い信頼関係</div><div class="item-sub">匿名アプリにはない「先生への信頼」が継続動機になる。アンケートでも「インストラクターからの一言」を3人が要望。</div></div></div>
+        <div class="swot-item"><div class="item-rank">S2</div><div><div class="item-main">DX・AI・業務改善の専門知識</div><div class="item-sub">GAS、Dify、Power BI、Python等を自在に扱える。開発コストをほぼゼロに抑えながらMVPを構築できる唯一の強み。</div></div></div>
+        <div class="swot-item"><div class="item-rank">S3</div><div><div class="item-main">沖縄拠点・地域コミュニティ密着</div><div class="item-sub">フェイスtoフェイスの信頼構築ができるローカル強者ポジション。オンライン展開時の「沖縄発」ブランドは差別化になる。</div></div></div>
+        <div class="swot-item"><div class="item-rank">S4</div><div><div class="item-main">アロマ・ホリスティックな世界観</div><div class="item-sub">呼吸法×アロマ×アーユルヴェーダという統合的アプローチは競合にない独自性。世界観として商品化できる。</div></div></div>
+        <div class="swot-item"><div class="item-rank">S5</div><div><div class="item-main">Phase 1で課題データを実証済み</div><div class="item-sub">アンケート7件・対面インタビューで「忘れる」「やり方不安」という具体的な障壁を定量化。仮説ではなく事実ベースで設計できる。</div></div></div>
+      </div>
+
+      <!-- Weakness -->
+      <div class="swot-cell">
+        <div class="swot-header">
+          <span class="swot-badge w-badge">Weakness</span>
+          <span class="swot-title">弱み</span>
+        </div>
+        <div class="swot-item"><div class="item-rank">W1</div><div><div class="item-main">サンプル数がまだ少ない（n=7）</div><div class="item-sub">仮説検証としては十分だが、事業判断・投資判断には追加データが必要。対面インタビューで補完中。</div></div></div>
+        <div class="swot-item"><div class="item-rank">W2</div><div><div class="item-main">競合アプリの使用経験がない</div><div class="item-sub">Calm / Headspace / みんチャレ等のUXを体感していないため、差別化ポイントが感覚値になりやすい。</div></div></div>
+        <div class="swot-item"><div class="item-rank">W3</div><div><div class="item-main">一人での開発・運営リソース制約</div><div class="item-sub">ヨガ指導・コンサル・アプリ開発を並行するには時間的限界がある。MVPをシンプルに保つことが重要。</div></div></div>
+        <div class="swot-item"><div class="item-rank">W4</div><div><div class="item-main">初期ユーザーが既存生徒に限定</div><div class="item-sub">クラス未参加者への展開フェーズでは「先生を知らない人」へのブランディングが別途必要になる。</div></div></div>
+      </div>
+
+      <!-- Opportunity -->
+      <div class="swot-cell">
+        <div class="swot-header">
+          <span class="swot-badge o-badge">Opportunity</span>
+          <span class="swot-title">機会</span>
+        </div>
+        <div class="swot-item"><div class="item-rank">O1</div><div><div class="item-main">習慣化アプリ市場が年率14%成長中</div><div class="item-sub">AI・コミュニティ・ゲーミフィケーション統合が世界トレンド。日本市場はまだ海外比で小さく先行者優位がある。</div></div></div>
+        <div class="swot-item"><div class="item-rank">O2</div><div><div class="item-main">日本の自己投資・ウェルネス市場7兆円</div><div class="item-sub">呼吸法・瞑想・マインドフルネスへの関心は加速中。ヨガ×習慣化という切り口はまだブルーオーシャン。</div></div></div>
+        <div class="swot-item"><div class="item-rank">O3</div><div><div class="item-main">「インストラクター主導型」習慣化は競合空白地帯</div><div class="item-sub">既存の習慣化アプリは匿名・汎用。「信頼できる先生が伴走する」モデルは未開拓で差別化余地が大きい。</div></div></div>
+        <div class="swot-item"><div class="item-rank">O4</div><div><div class="item-main">沖縄観光×ウェルネスのトレンド</div><div class="item-sub">沖縄のウェルネスツーリズム需要拡大。リトリート・体験型プログラムとアプリの連携で新市場を開拓できる。</div></div></div>
+        <div class="swot-item"><div class="item-rank">O5</div><div><div class="item-main">AI活用で個別フィードバックをスケール化</div><div class="item-sub">DifyやGASを使えば「先生からの一言」を半自動化し、スケールしながら温かさを維持できる。</div></div></div>
+      </div>
+
+      <!-- Threat -->
+      <div class="swot-cell">
+        <div class="swot-header">
+          <span class="swot-badge t-badge">Threat</span>
+          <span class="swot-title">脅威</span>
+        </div>
+        <div class="swot-item"><div class="item-rank">T1</div><div><div class="item-main">Calm・Headspace等グローバル大手の資本力</div><div class="item-sub">マーケティング予算・コンテンツ量・UX品質で圧倒的差がある。正面衝突は避け、ニッチに特化する必要。</div></div></div>
+        <div class="swot-item"><div class="item-rank">T2</div><div><div class="item-main">みんチャレ等の国内競合（150万ユーザー）</div><div class="item-sub">コミュニティ×習慣化のポジションはすでに確立されている。「ヨガ・呼吸法特化」で明確に棲み分けが必要。</div></div></div>
+        <div class="swot-item"><div class="item-rank">T3</div><div><div class="item-main">無料コンテンツとの競合（YouTube等）</div><div class="item-sub">アンケートでも「YouTubeで試したがわからなかった」との声あり。無料の質が高いため有料化の壁は高い。</div></div></div>
+        <div class="swot-item"><div class="item-rank">T4</div><div><div class="item-main">ユーザーの習慣化離脱リスク</div><div class="item-sub">どのアプリも「三日坊主」は共通課題。継続率設計が甘いと差別化できず、解約率が上がる。</div></div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 競合分析 -->
+  <div class="section">
+    <div class="section-title">02 ｜ 競合分析と差別化マップ</div>
+    <table class="comp-table">
+      <tr>
+        <th>競合</th>
+        <th>強み</th>
+        <th>弱み（=とっとさんのチャンス）</th>
+        <th>差別化の方向</th>
+      </tr>
+      <tr>
+        <td><span class="comp-name">Calm / Headspace</span></td>
+        <td>UX・ブランド・コンテンツ量、英語圏中心に世界展開</td>
+        <td><span class="gap-good">✓</span> 汎用すぎて「呼吸法特化」がない<br><span class="gap-good">✓</span> 日本語コンテンツが弱い<br><span class="gap-good">✓</span> インストラクターとの人間関係がない</td>
+        <td><div class="diff-highlight">日本語×特定インストラクター×呼吸特化</div></td>
+      </tr>
+      <tr>
+        <td><span class="comp-name">みんチャレ</span></td>
+        <td>5人チーム×匿名×コミュニティで継続率UP</td>
+        <td><span class="gap-good">✓</span> 汎用習慣化で呼吸法特化ではない<br><span class="gap-good">✓</span> 指導者不在でやり方不安が解消されない<br><span class="gap-bad">✗</span> コミュニティモデルは強力</td>
+        <td><div class="diff-highlight">指導者が伴走する安心感＋専門性</div></td>
+      </tr>
+      <tr>
+        <td><span class="comp-name">Habitica / Productive</span></td>
+        <td>ゲーミフィケーション・習慣トラッカー機能</td>
+        <td><span class="gap-good">✓</span> ウェルネス・呼吸の文脈がない<br><span class="gap-good">✓</span> 動画ガイドがない<br><span class="gap-good">✓</span> インストラクター関係がない</td>
+        <td><div class="diff-highlight">ガイド動画×記録×先生の言葉の三位一体</div></td>
+      </tr>
+      <tr>
+        <td><span class="comp-name">YouTube（無料）</span></td>
+        <td>コンテンツ無限・無料</td>
+        <td><span class="gap-good">✓</span> 双方向性・継続記録・リマインダーがない<br><span class="gap-good">✓</span> 「あっているか不安」を解消できない<br><span class="gap-good">✓</span> 生徒との関係性がない</td>
+        <td><div class="diff-highlight">継続の仕組み＋安心できるフィードバック</div></td>
+      </tr>
+    </table>
+    <div class="insight">
+      <div class="insight-title">🎯 とっとさんの独占できるポジション</div>
+      <div class="insight-body">「信頼できるインストラクターが伴走する、呼吸法特化の習慣化プラットフォーム」。これは既存のどの競合も持っていない。大手は汎用性が強みゆえに、特定インストラクターとの人間関係という武器が使えない。</div>
+    </div>
+  </div>
+
+  <!-- クロスSWOT -->
+  <div class="section">
+    <div class="section-title">03 ｜ クロスSWOT戦略（4象限）</div>
+    <div class="cross-grid">
+
+      <!-- SO戦略 -->
+      <div class="cross-card so-card">
+        <div class="cross-label so-label">S × O ｜ 強みで機会を掴む</div>
+        <div class="cross-title">「信頼×専門性×AI」で<br>インストラクター型習慣化の先駆者になる</div>
+        <div class="cross-body">S1（生徒との信頼）× O3（競合空白地帯）を掛け合わせ、「先生が伴走する」という唯一無二のポジションを確立。S2（DX知識）× O5（AI活用）で、温かみのあるリマインダーをスケール化。S4（ホリスティック世界観）× O2（ウェルネス市場）で、呼吸法を超えたライフスタイルブランドに育てる。</div>
+        <div class="cross-action">
+          <div class="action-label">具体アクション</div>
+          <div class="action-item">既存生徒向けに「先生からの一言付き」LINEリマインダーをMVPとして開始</div>
+          <div class="action-item">Dify×GASで半自動化しながら温かみを維持</div>
+          <div class="action-item">沖縄ウェルネス×呼吸法のInstagram発信でブランド構築</div>
+        </div>
+      </div>
+
+      <!-- ST戦略 -->
+      <div class="cross-card st-card">
+        <div class="cross-label st-label">S × T ｜ 強みで脅威を回避する</div>
+        <div class="cross-title">大手と戦わず「ニッチ特化」で<br>盤石なコアユーザー層を作る</div>
+        <div class="cross-body">T1（大手の資本力）に正面衝突せず、S1（生徒との信頼）× S3（沖縄密着）という「人間関係資産」で守る。YouTube等の無料コンテンツ（T3）に対しては、S5（実証済みデータ）を使った「このやり方で〇〇人が続いた」という実績訴求で有料化の壁を越える。</div>
+        <div class="cross-action">
+          <div class="action-label">具体アクション</div>
+          <div class="action-item">「100人が続いた呼吸習慣」という実績を最初のKGIに設定</div>
+          <div class="action-item">既存生徒のロイヤル層を無料で固め、口コミ獲得源にする</div>
+          <div class="action-item">大手が手を出せない「1対少数の伴走感」を差別化軸に</div>
+        </div>
+      </div>
+
+      <!-- WO戦略 -->
+      <div class="cross-card wo-card">
+        <div class="cross-label wo-label">W × O ｜ 弱みを機会で補う</div>
+        <div class="cross-title">競合未体験を逆手に取り<br>「生徒目線」の設計で差別化する</div>
+        <div class="cross-body">W2（競合未使用）は今すぐCalmやみんチャレを体験することで解消できる。W3（一人運営）× O5（AI活用）を掛け合わせれば、Dify等でコンテンツ配信を自動化し、リソース制約を超えることができる。市場成長（O1）が続く間に、小さくてもエビデンスある実績を積み上げることで投資判断の根拠ができる。</div>
+        <div class="cross-action">
+          <div class="action-label">具体アクション</div>
+          <div class="action-item">今週中にCalmとみんチャレを1週間ずつ体験し、UX比較メモを作る</div>
+          <div class="action-item">LINEリマインダーをDifyで半自動化し、運営工数を週2時間以下に抑える</div>
+          <div class="action-item">n=7の実証データを「小さな実績」として発信し始める</div>
+        </div>
+      </div>
+
+      <!-- WT戦略 -->
+      <div class="cross-card wt-card">
+        <div class="cross-label wt-label">W × T ｜ 弱みと脅威を最小化する</div>
+        <div class="cross-title">「シンプル×小さく×早く」で<br>リソース過負荷と競合圧力を同時回避</div>
+        <div class="cross-body">W3（一人運営）× T1（大手資本）という最悪シナリオを避けるため、機能を欲張らずMVPをシンプルに保つことが最大のリスクヘッジ。W4（既存生徒限定）× T4（離脱リスク）には、記録の可視化（達成感）と小さな成功体験の設計で先手を打つ。</div>
+        <div class="cross-action">
+          <div class="action-label">具体アクション</div>
+          <div class="action-item">MVP機能は「リマインダー＋記録＋動画ガイド」の3つだけに絞る</div>
+          <div class="action-item">7日・14日・30日のマイルストーンで達成感を細かく設計</div>
+          <div class="action-item">過剰な機能追加を戒めるため「削ぎ落とし基準」をKPIで管理する</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- マネタイズロードマップ -->
+  <div class="section">
+    <div class="section-title">04 ｜ マネタイズロードマップ</div>
+    <div class="mono-flow">
+      <div class="mono-step">
+        <div class="mono-phase">Phase MVP（今）</div>
+        <div class="mono-title">既存生徒向け無料</div>
+        <div class="mono-price">¥0</div>
+        <div class="mono-target">7〜20人を対象に検証</div>
+      </div>
+      <div class="mono-arrow">→</div>
+      <div class="mono-step">
+        <div class="mono-phase">Phase 2（3〜6ヶ月後）</div>
+        <div class="mono-title">低価格サブスク</div>
+        <div class="mono-price">¥500〜980/月</div>
+        <div class="mono-target">既存生徒＋紹介者へ展開</div>
+      </div>
+      <div class="mono-arrow">→</div>
+      <div class="mono-step">
+        <div class="mono-phase">Phase 3（1年後〜）</div>
+        <div class="mono-title">一般向けサブスク</div>
+        <div class="mono-price">¥980〜1,980/月</div>
+        <div class="mono-target">クラス未参加者・Instagram流入</div>
+      </div>
+      <div class="mono-arrow">→</div>
+      <div class="mono-step">
+        <div class="mono-phase">Phase 4（将来）</div>
+        <div class="mono-title">法人・スタジオ向け</div>
+        <div class="mono-price">要相談</div>
+        <div class="mono-target">B2B展開・インストラクター版</div>
+      </div>
+    </div>
+    <div class="insight">
+      <div class="insight-title">💡 戦略の核心：「信頼の段階的拡張」</div>
+      <div class="insight-body">既存生徒（信頼100%）→ 紹介者（信頼70%）→ SNS流入（信頼30%）という順番で展開することで、口コミと実績を積み上げながら自然にスケールできる。無理に大きくしようとせず、各フェーズで「継続率」を次のフェーズへの判断基準にする。</div>
+    </div>
+  </div>
+
+  <!-- 戦略優先順位 -->
+  <div class="section">
+    <div class="section-title">05 ｜ 戦略優先順位（フェーズ別）</div>
+    <div class="priority-list">
+      <div class="p-item">
+        <div class="p-num">1</div>
+        <div class="p-content">
+          <div class="p-title">競合を実際に体験し、UXの差分を言語化する</div>
+          <div class="p-body">Calm・みんチャレを1週間ずつ使い、「とっとさんのアプリにしかできないこと」を具体的に定義する。感覚論ではなく使用経験ベースの差別化戦略が作れる。</div>
+          <div class="p-phase">→ 今週中に着手 / Phase 2完了条件</div>
+        </div>
+      </div>
+      <div class="p-item">
+        <div class="p-num">2</div>
+        <div class="p-content">
+          <div class="p-title">「インストラクター伴走型」というポジションを言語化・固定する</div>
+          <div class="p-body">競合にない「先生が一緒にいる」という価値を、キャッチコピー・世界観・ビジュアルで表現できる状態にする。これがPhase 3（CATWOE）の土台になる。</div>
+          <div class="p-phase">→ Phase 3のCATWOE分析で深化</div>
+        </div>
+      </div>
+      <div class="p-item">
+        <div class="p-num">3</div>
+        <div class="p-content">
+          <div class="p-title">MVPを3機能に絞り、今月中に動かし始める</div>
+          <div class="p-body">リマインダー＋記録＋動画ガイドの3つだけ。LINEとGoogleフォームとDriveだけで構築可能。考え続けるより動いて測る。</div>
+          <div class="p-phase">→ Phase 5（MVP）で実装</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Next Steps -->
+  <div class="next">
+    <div class="next-title">→ Next Steps ｜ Phase 3（CATWOE分析）へ</div>
+    <div class="next-item">
+      <div class="next-num">01</div>
+      <div>
+        <div class="next-text">CalmとみんチャレをDLして1週間ずつ体験 → UX比較メモをNotionに記録</div>
+        <div class="next-phase">PHASE 02 補完 ／ 今週中</div>
+      </div>
+    </div>
+    <div class="next-item">
+      <div class="next-num">02</div>
+      <div>
+        <div class="next-text">CATWOE分析で「誰のための、何の価値か」をゼロから言語化する</div>
+        <div class="next-phase">→ PHASE 03</div>
+      </div>
+    </div>
+    <div class="next-item">
+      <div class="next-num">03</div>
+      <div>
+        <div class="next-text">「インストラクター伴走型習慣化」というコンセプトのキャッチコピーを3案作る</div>
+        <div class="next-phase">→ PHASE 03</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

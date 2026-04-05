@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Serif+JP:wght@400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#FAF8F4;color:#1E1E1C;font-family:'Noto Sans JP',sans-serif;padding:40px 24px;}
+.container{max-width:980px;margin:0 auto;}
+
+.header{text-align:center;margin-bottom:48px;padding:40px;border:1px solid rgba(42,122,111,0.2);background:rgba(42,122,111,0.02);position:relative;}
+.header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#2A7A6F,transparent);}
+.eyebrow{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.35em;color:#C4602A;text-transform:uppercase;margin-bottom:12px;}
+.main-title{font-size:26px;font-weight:700;letter-spacing:0.05em;margin-bottom:8px;}
+.sub{font-family:'Cormorant Garamond',serif;font-size:15px;color:#6B6A66;font-style:italic;}
+
+.section-title{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.3em;color:#C4602A;text-transform:uppercase;margin-bottom:24px;display:flex;align-items:center;gap:12px;}
+.section-title::after{content:'';flex:1;height:1px;background:#E0DAD0;}
+.section{margin-bottom:52px;}
+
+/* BML Loop */
+.bml-loop{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-bottom:32px;}
+.bml-card{padding:28px;text-align:center;position:relative;}
+.build{background:#E4F0EE;border:1px solid rgba(42,122,111,0.2);}
+.measure{background:#F0EBE0;border:1px solid rgba(196,96,42,0.2);}
+.learn{background:#FFF0E8;border:1px solid rgba(42,122,111,0.2);}
+.bml-icon{font-size:32px;margin-bottom:12px;}
+.bml-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.25em;text-transform:uppercase;margin-bottom:8px;}
+.build .bml-label{color:#2A7A6F;}
+.measure .bml-label{color:#C4602A;}
+.learn .bml-label{color:#2A7A6F;}
+.bml-title{font-size:16px;font-weight:700;color:#1E1E1C;margin-bottom:8px;}
+.bml-body{font-size:11px;color:#6B6A66;line-height:1.7;}
+.bml-arrow{display:flex;align-items:center;justify-content:center;color:rgba(42,122,111,0.3);font-size:24px;font-family:'Space Mono',monospace;}
+
+/* MVP Stack */
+.mvp-stack{display:flex;flex-direction:column;gap:3px;margin-bottom:32px;}
+.stack-row{display:grid;grid-template-columns:120px 1fr 200px;background:#F0EBE0;border-left:3px solid transparent;}
+.stack-row.core{border-color:#2A7A6F;}
+.stack-row.support{border-color:#C4602A;}
+.stack-row.auto{border-color:#2A7A6F;}
+.stack-layer{padding:16px 20px;border-right:1px solid rgba(0,0,0,0.06);display:flex;flex-direction:column;justify-content:center;}
+.stack-layer-name{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:4px;}
+.core .stack-layer-name{color:#2A7A6F;}
+.support .stack-layer-name{color:#C4602A;}
+.auto .stack-layer-name{color:#2A7A6F;}
+.stack-content{padding:16px 20px;}
+.stack-title{font-size:13px;font-weight:700;color:#1E1E1C;margin-bottom:4px;}
+.stack-body{font-size:11px;color:#6B6A66;line-height:1.6;}
+.stack-tools{padding:16px 20px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.tool-tag{font-size:9px;font-family:'Space Mono',monospace;padding:3px 8px;border-radius:2px;border:1px solid rgba(0,0,0,0.08);color:#9A9590;}
+.tool-tag.active{border-color:rgba(42,122,111,0.3);color:#2A7A6F;background:rgba(42,122,111,0.05);}
+
+/* GitHub tree */
+.github-tree{background:#E8E2D8;border:1px solid rgba(0,0,0,0.07);padding:28px;font-family:'Space Mono',monospace;font-size:12px;line-height:2;margin-bottom:16px;}
+.tree-root{color:#2A7A6F;font-weight:700;}
+.tree-dir{color:#D4703A;}
+.tree-file{color:#6B6A66;}
+.tree-comment{color:#B8B3AE;font-size:10px;}
+.tree-highlight{color:#2A7A6F;}
+
+/* Cursor workflow */
+.cursor-flow{display:flex;flex-direction:column;gap:3px;margin-bottom:32px;}
+.cursor-step{display:grid;grid-template-columns:48px 1fr 180px;background:#F0EBE0;border:1px solid rgba(0,0,0,0.06);}
+.cs-num{background:rgba(42,122,111,0.08);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:#2A7A6F;}
+.cs-content{padding:16px 20px;}
+.cs-title{font-size:13px;font-weight:700;color:#1E1E1C;margin-bottom:4px;}
+.cs-body{font-size:11px;color:#6B6A66;line-height:1.6;}
+.cs-code{background:#E8E2D8;border:1px solid rgba(0,0,0,0.07);padding:10px 14px;font-family:'Space Mono',monospace;font-size:10px;color:#2A7A6F;margin-top:8px;line-height:1.8;}
+.cs-tool{padding:16px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;justify-content:center;border-left:1px solid rgba(0,0,0,0.06);}
+.cs-tool-tag{font-size:9px;font-family:'Space Mono',monospace;padding:3px 10px;border-radius:2px;}
+.cursor-tag{background:rgba(196,96,42,0.1);border:1px solid rgba(196,96,42,0.3);color:#C4602A;}
+.github-tag{background:rgba(90,90,100,0.15);border:1px solid rgba(90,90,100,0.3);color:#6B6A66;}
+.claude-tag{background:rgba(42,122,111,0.1);border:1px solid rgba(42,122,111,0.3);color:#2A7A6F;}
+.gas-tag{background:rgba(42,122,111,0.1);border:1px solid rgba(42,122,111,0.3);color:#2A7A6F;}
+
+/* Week schedule */
+.week-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px;}
+.week-card{background:#F0EBE0;border:1px solid rgba(0,0,0,0.06);padding:20px;}
+.week-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.2em;color:#A8A39E;text-transform:uppercase;margin-bottom:12px;}
+.week-goal{font-size:12px;font-weight:700;color:#2A7A6F;margin-bottom:10px;}
+.week-task{font-size:11px;color:#6B6A66;line-height:1.7;padding:4px 0;border-bottom:1px solid rgba(0,0,0,0.04);}
+.week-task:last-child{border-bottom:none;}
+
+/* Prompt template */
+.prompt-card{background:#E8E2D8;border:1px solid rgba(42,122,111,0.15);padding:24px;margin-bottom:16px;}
+.prompt-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.2em;color:#2A7A6F;text-transform:uppercase;margin-bottom:12px;}
+.prompt-text{font-family:'Space Mono',monospace;font-size:11px;color:#7a9a7a;line-height:1.8;white-space:pre-wrap;}
+.prompt-var{color:#2A7A6F;}
+
+/* insight / alert */
+.insight{background:rgba(42,122,111,0.05);border-left:3px solid #2A7A6F;padding:16px 20px;margin-bottom:12px;}
+.insight-title{font-size:12px;font-weight:700;color:#C4602A;margin-bottom:6px;}
+.insight-body{font-size:12px;color:#6B6A66;line-height:1.7;}
+.alert{background:rgba(42,122,111,0.04);border-left:3px solid #2A7A6F;padding:16px 20px;margin-bottom:12px;}
+.alert-title{font-size:12px;font-weight:700;color:#C4602A;margin-bottom:6px;}
+.alert-body{font-size:12px;color:#6B6A66;line-height:1.7;}
+
+/* Checklist */
+.checklist{background:#F0EBE0;border:1px solid rgba(0,0,0,0.07);padding:24px;}
+.check-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid rgba(0,0,0,0.06);}
+.check-item:last-child{border-bottom:none;}
+.check-box{width:18px;height:18px;border:1px solid rgba(42,122,111,0.3);border-radius:2px;flex-shrink:0;margin-top:2px;}
+.check-text{font-size:12px;color:#6B6A66;line-height:1.6;}
+.check-tool{font-size:10px;font-family:'Space Mono',monospace;color:#C4602A;margin-top:3px;}
+
+/* next */
+.next{background:#F0EBE0;border:1px solid rgba(42,122,111,0.2);padding:28px;margin-top:40px;}
+.next-title{font-size:14px;font-weight:700;color:#C4602A;margin-bottom:20px;}
+.next-item{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.06);}
+.next-item:last-child{border-bottom:none;}
+.next-num{font-family:'Space Mono',monospace;font-size:11px;color:#2A7A6F;min-width:24px;margin-top:2px;}
+.next-text{font-size:13px;color:#6B6A66;line-height:1.6;}
+.next-phase{font-size:9px;color:#2A7A6F;font-family:'Space Mono',monospace;margin-top:4px;letter-spacing:0.1em;}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="eyebrow">Phase 05 — MVP Build · Measure · Learn</div>
+    <div class="main-title">呼吸習慣プロジェクト｜MVP構築 ＆ GitHub管理設計</div>
+    <div class="sub">Build small. Measure honestly. Learn fast. ／ asa AI Lab</div>
+  </div>
+
+  <!-- BML Loop -->
+  <div class="section">
+    <div class="section-title">00 ｜ Build–Measure–Learn ループの設計思想</div>
+    <div class="bml-loop">
+      <div class="bml-card build">
+        <div class="bml-icon">🔨</div>
+        <div class="bml-label">Build</div>
+        <div class="bml-title">小さく作る</div>
+        <div class="bml-body">完璧を目指さない。アプリ開発より先に「LINEとGoogleで動く最小の仕組み」を今週中に起動する。</div>
+      </div>
+      <div class="bml-card measure">
+        <div class="bml-icon">📊</div>
+        <div class="bml-label">Measure</div>
+        <div class="bml-title">正直に測る</div>
+        <div class="bml-body">7日継続率・動画視聴率・フィードバック数。感覚ではなく数字で判断する。毎週月曜にKPIを記録。</div>
+      </div>
+      <div class="bml-card learn">
+        <div class="bml-icon">💡</div>
+        <div class="bml-label">Learn</div>
+        <div class="bml-title">素早く改善する</div>
+        <div class="bml-body">データから「なぜ続いた／続かなかった」を分析。次のBuildに反映。このループを月1回転させる。</div>
+      </div>
+    </div>
+    <div class="insight">
+      <div class="insight-title">🎯 MVPの判断基準</div>
+      <div class="insight-body">7日継続率が70%以上 → 次のループへ進む。70%未満 → リマインダーのタイミングや動画の長さを改善して再測定。30日継続率が50%以上 → 有料化フェーズへ移行する判断ができる。</div>
+    </div>
+  </div>
+
+  <!-- MVP技術スタック -->
+  <div class="section">
+    <div class="section-title">01 ｜ MVPの技術スタック（4週間で動かす最小構成）</div>
+    <div class="mvp-stack">
+
+      <div class="stack-row core">
+        <div class="stack-layer">
+          <div class="stack-layer-name">Core</div>
+          <div style="font-size:10px;color:#B8B3AE;">配信基盤</div>
+        </div>
+        <div class="stack-content">
+          <div class="stack-title">LINE公式アカウント ＋ GAS</div>
+          <div class="stack-body">毎朝のリマインダー配信・週次レポート・先生からの一言を自動送信。ユーザーはLINEを開くだけでいい。アプリのDLハードルがゼロ。</div>
+        </div>
+        <div class="stack-tools">
+          <span class="tool-tag active">LINE公式</span>
+          <span class="tool-tag active">GAS</span>
+          <span class="tool-tag active">Cursor</span>
+        </div>
+      </div>
+
+      <div class="stack-row core">
+        <div class="stack-layer">
+          <div class="stack-layer-name">Core</div>
+          <div style="font-size:10px;color:#B8B3AE;">記録</div>
+        </div>
+        <div class="stack-content">
+          <div class="stack-title">Googleフォーム ＋ スプレッドシート</div>
+          <div class="stack-body">「今日やった？」の記録をフォームで収集。スプレッドシートで継続率・達成カレンダーを自動集計。ユーザーには週次で進捗グラフを返す。</div>
+        </div>
+        <div class="stack-tools">
+          <span class="tool-tag active">Gフォーム</span>
+          <span class="tool-tag active">Gスプレッド</span>
+          <span class="tool-tag active">GAS</span>
+        </div>
+      </div>
+
+      <div class="stack-row support">
+        <div class="stack-layer">
+          <div class="stack-layer-name">Support</div>
+          <div style="font-size:10px;color:#B8B3AE;">コンテンツ</div>
+        </div>
+        <div class="stack-content">
+          <div class="stack-title">ガイド動画（3分・5分・10分）</div>
+          <div class="stack-body">とっとさんの顔出し動画をGoogle Drive or YouTubeで限定公開。LINEから動画URLを送る形でゼロ費用で配信できる。まず3分1本から始める。</div>
+        </div>
+        <div class="stack-tools">
+          <span class="tool-tag active">Google Drive</span>
+          <span class="tool-tag">YouTube（限定）</span>
+        </div>
+      </div>
+
+      <div class="stack-row support">
+        <div class="stack-layer">
+          <div class="stack-layer-name">Support</div>
+          <div style="font-size:10px;color:#B8B3AE;">一言生成</div>
+        </div>
+        <div class="stack-content">
+          <div class="stack-title">Claude ＋ 週テーマプロンプト</div>
+          <div class="stack-body">心理学・脳科学・生理学・古典知識の週テーマに沿ってClaudeが「先生からの一言」の下書きを生成。とっとさんが確認して送信。30分→5分に短縮。</div>
+        </div>
+        <div class="stack-tools">
+          <span class="tool-tag active">Claude</span>
+          <span class="tool-tag">プロンプト管理</span>
+        </div>
+      </div>
+
+      <div class="stack-row auto">
+        <div class="stack-layer">
+          <div class="stack-layer-name">Auto</div>
+          <div style="font-size:10px;color:#B8B3AE;">管理</div>
+        </div>
+        <div class="stack-content">
+          <div class="stack-title">GitHub ＋ Cursor ＋ Notion</div>
+          <div class="stack-body">GASコード・HTMLレポート・プロンプトテンプレートをGitHubで一元管理。CursorでAI補助しながらコーディング → commit → Notionにリンク。</div>
+        </div>
+        <div class="stack-tools">
+          <span class="tool-tag active">GitHub</span>
+          <span class="tool-tag active">Cursor</span>
+          <span class="tool-tag active">Notion</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- GitHub構成 -->
+  <div class="section">
+    <div class="section-title">02 ｜ GitHubリポジトリ構成</div>
+    <div class="github-tree">
+<span class="tree-root">📁 asa-ai-lab-breathing-habit/</span>  <span class="tree-comment">← メインリポジトリ</span>
+│
+├── <span class="tree-dir">📁 reports/</span>  <span class="tree-comment">← Phaseレポート（HTML）をそのまま保存</span>
+│   ├── <span class="tree-highlight">phase1_analysis.html</span>
+│   ├── <span class="tree-highlight">phase2_swot.html</span>
+│   ├── <span class="tree-highlight">phase3_catwoe.html</span>
+│   ├── <span class="tree-highlight">phase4_kgi_kpi_kdi.html</span>
+│   └── <span class="tree-highlight">phase5_mvp.html</span>
+│
+├── <span class="tree-dir">📁 gas/</span>  <span class="tree-comment">← Google Apps Scriptのコード管理</span>
+│   ├── <span class="tree-file">reminder_line.gs</span>  <span class="tree-comment">← LINEリマインダー送信</span>
+│   ├── <span class="tree-file">record_collector.gs</span>  <span class="tree-comment">← フォーム回答の集計</span>
+│   └── <span class="tree-file">weekly_report.gs</span>  <span class="tree-comment">← 週次KPIレポート生成</span>
+│
+├── <span class="tree-dir">📁 prompts/</span>  <span class="tree-comment">← Claudeプロンプトのテンプレート管理</span>
+│   ├── <span class="tree-file">daily_message_template.md</span>  <span class="tree-comment">← 先生からの一言テンプレート</span>
+│   ├── <span class="tree-file">weekly_theme_schedule.md</span>  <span class="tree-comment">← 週テーマカレンダー</span>
+│   └── <span class="tree-file">kpi_analysis_prompt.md</span>  <span class="tree-comment">← KPI分析プロンプト</span>
+│
+├── <span class="tree-dir">📁 data/</span>  <span class="tree-comment">← 匿名化したアンケート・KPIデータ</span>
+│   ├── <span class="tree-file">phase1_survey_anonymous.csv</span>
+│   └── <span class="tree-file">kpi_weekly_log.csv</span>  <span class="tree-comment">← 毎週月曜に追記</span>
+│
+├── <span class="tree-dir">📁 docs/</span>  <span class="tree-comment">← GitHub Pages用（将来の公開ページ）</span>
+│   └── <span class="tree-file">index.html</span>  <span class="tree-comment">← プロジェクト紹介ページ</span>
+│
+└── <span class="tree-file">README.md</span>  <span class="tree-comment">← プロジェクト概要・進行状況</span>
+    </div>
+    <div class="alert">
+      <div class="alert-title">✅ GitHub Pages を有効にするメリット</div>
+      <div class="alert-body">docs/ フォルダを公開設定にするだけで、Phase 1〜5のレポートがURLでアクセスできる静的サイトになります。Notionのリンク集からそのURLを参照すれば、美しいHTMLレポートをどこからでも見られる状態が完成します。</div>
+    </div>
+  </div>
+
+  <!-- Cursor × GitHub ワークフロー -->
+  <div class="section">
+    <div class="section-title">03 ｜ Cursor × GitHub 自動化ワークフロー</div>
+    <div class="cursor-flow">
+
+      <div class="cursor-step">
+        <div class="cs-num">1</div>
+        <div class="cs-content">
+          <div class="cs-title">リポジトリをCloneしてCursorで開く</div>
+          <div class="cs-body">まずGitHubでリポジトリを作成。Cursorで「Open Folder」でそのリポジトリを開く。これ以降、コード編集はすべてCursorの中で完結する。</div>
+          <div class="cs-code">git clone https://github.com/asa-ai-lab/breathing-habit.git
+cd breathing-habit</div>
+        </div>
+        <div class="cs-tool">
+          <span class="cs-tool-tag github-tag">GitHub</span>
+          <span class="cs-tool-tag cursor-tag">Cursor</span>
+        </div>
+      </div>
+
+      <div class="cursor-step">
+        <div class="cs-num">2</div>
+        <div class="cs-content">
+          <div class="cs-title">CursorのAIチャットでGASコードを生成</div>
+          <div class="cs-body">Cursorのチャット欄に「やりたいこと」を日本語で書くだけでコードを生成してくれる。エラーもAIが直してくれるのでコーディング経験不要。</div>
+          <div class="cs-code"><span style="color:#6B6A66;">// Cursorチャットへの指示例：</span>
+"毎朝7時にLINE公式アカウントから
+登録ユーザー全員にメッセージを送る
+GASスクリプトを書いてください"</div>
+        </div>
+        <div class="cs-tool">
+          <span class="cs-tool-tag cursor-tag">Cursor AI</span>
+          <span class="cs-tool-tag gas-tag">GAS</span>
+        </div>
+      </div>
+
+      <div class="cursor-step">
+        <div class="cs-num">3</div>
+        <div class="cs-content">
+          <div class="cs-title">動作確認してGitHubにcommit & push</div>
+          <div class="cs-body">コードが動いたらCursorのSource Controlパネル（GitHubマーク）から変更をcommitしてpushする。差分が自動で記録されるので「どの時点に戻るか」がいつでも選べる。</div>
+          <div class="cs-code">git add gas/reminder_line.gs
+git commit -m "feat: LINEリマインダー送信スクリプト追加"
+git push origin main</div>
+        </div>
+        <div class="cs-tool">
+          <span class="cs-tool-tag github-tag">commit</span>
+          <span class="cs-tool-tag cursor-tag">Source Control</span>
+        </div>
+      </div>
+
+      <div class="cursor-step">
+        <div class="cs-num">4</div>
+        <div class="cs-content">
+          <div class="cs-title">Claudeでプロンプトを磨き、promptsフォルダに保存</div>
+          <div class="cs-body">「先生からの一言」のプロンプトテンプレートをClaudeで作成・改善。良いバージョンをprompts/フォルダにmarkdownで保存してcommitする。プロンプトもバージョン管理できる。</div>
+          <div class="cs-code"><span style="color:#6B6A66;"># prompts/daily_message_template.md に保存</span>
+git add prompts/daily_message_template.md
+git commit -m "prompt: 月曜テーマ（心理学）の一言テンプレート更新"</div>
+        </div>
+        <div class="cs-tool">
+          <span class="cs-tool-tag claude-tag">Claude</span>
+          <span class="cs-tool-tag github-tag">commit</span>
+        </div>
+      </div>
+
+      <div class="cursor-step">
+        <div class="cs-num">5</div>
+        <div class="cs-content">
+          <div class="cs-title">KPIデータを毎週追記 → Claudeで分析</div>
+          <div class="cs-body">毎週月曜にkpi_weekly_log.csvにデータを追記してcommit。蓄積されたデータをClaudeに渡して「継続率が下がった週の原因分析」を依頼する。データがGitHubにあるので会話にそのまま貼れる。</div>
+          <div class="cs-code">git add data/kpi_weekly_log.csv
+git commit -m "data: Week3 KPI記録 継続率68%"</div>
+        </div>
+        <div class="cs-tool">
+          <span class="cs-tool-tag claude-tag">Claude分析</span>
+          <span class="cs-tool-tag github-tag">データ管理</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 先生からの一言プロンプト -->
+  <div class="section">
+    <div class="section-title">04 ｜ 「先生からの一言」Claudeプロンプトテンプレート</div>
+    <div class="prompt-card">
+      <div class="prompt-label">prompts/daily_message_template.md ｜ 週テーマ別テンプレート</div>
+      <div class="prompt-text">あなたはヨガインストラクター「はっち」として、
+生徒へ毎日の呼吸習慣をサポートする短いメッセージを書いてください。
+
+【今日のテーマ】<span class="prompt-var">{{theme}}</span>
+【週テーマ例】
+- 月：心理（自己効力感・習慣化の仕組み）
+- 火：生理（体への具体的な変化・迷走神経・HRV）
+- 水：古典知恵（プラーナヤーマ・アーユルヴェーダ）
+- 木：脳科学（コルチゾール・デフォルトモードネットワーク）
+- 金：実践tips（if-thenプランニング・タイミング設計）
+- 土：振り返り（今週の気づきを一言で）
+- 日：意図設定（来週への小さな宣言）
+
+【生徒の状況】<span class="prompt-var">{{user_context}}</span>
+（例：継続率70%、7日目、やり方が不安という声が多い）
+
+【制約】
+- 150文字以内
+- 押しつけがましくなく、温かく寄り添う文体
+- 科学的な根拠を1文だけ添える
+- 最後に今日の呼吸法への具体的な誘い文句を入れる
+- 絵文字を1〜2個使う
+
+【とっとさんの文体参考】
+「〜だよ」「〜してみてね」「〜だから大丈夫」という
+沖縄の空気感と優しさが滲む語り口</div>
+    </div>
+    <div class="insight">
+      <div class="insight-title">💡 プロンプトをGitHubで管理する利点</div>
+      <div class="insight-body">「2週間前のバージョンの方がよかった」という時に即座に戻せる。また蓄積されたプロンプトのバージョン履歴は、将来他のインストラクターにライセンスする際の「知的財産」になる。</div>
+    </div>
+  </div>
+
+  <!-- 4週間ロードマップ -->
+  <div class="section">
+    <div class="section-title">05 ｜ MVP 4週間ロードマップ</div>
+    <div class="week-grid">
+      <div class="week-card">
+        <div class="week-label">Week 1</div>
+        <div class="week-goal">🔨 インフラ構築</div>
+        <div class="week-task">GitHubリポジトリ作成・初期構成</div>
+        <div class="week-task">LINE公式アカウント開設</div>
+        <div class="week-task">Googleフォーム（記録用）作成</div>
+        <div class="week-task">GASリマインダースクリプト作成（Cursor使用）</div>
+        <div class="week-task">生徒10人に参加を依頼</div>
+      </div>
+      <div class="week-card">
+        <div class="week-label">Week 2</div>
+        <div class="week-goal">🎬 コンテンツ起動</div>
+        <div class="week-task">ガイド動画1本撮影（3分・基本の呼吸法）</div>
+        <div class="week-task">Claudeで週テーマプロンプト完成</div>
+        <div class="week-task">「先生からの一言」初回配信</div>
+        <div class="week-task">7日継続率を計測開始</div>
+        <div class="week-task">KPIログをGitHubに初コミット</div>
+      </div>
+      <div class="week-card">
+        <div class="week-label">Week 3</div>
+        <div class="week-goal">📊 計測・改善</div>
+        <div class="week-task">7日継続率を確認（目標70%）</div>
+        <div class="week-task">フィードバックをClaudeで分析</div>
+        <div class="week-task">リマインダー時間・文体を調整</div>
+        <div class="week-task">動画2本目撮影（5分・応用）</div>
+        <div class="week-task">週次レポートGASスクリプト追加</div>
+      </div>
+      <div class="week-card">
+        <div class="week-label">Week 4</div>
+        <div class="week-goal">🔄 次ループへ</div>
+        <div class="week-task">14日継続率を計測</div>
+        <div class="week-task">満足度アンケート実施</div>
+        <div class="week-task">Loop1の学びをNotionにまとめ</div>
+        <div class="week-task">改善点をGitHubのIssueに記録</div>
+        <div class="week-task">Loop2（改善版）の設計開始</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 着手チェックリスト -->
+  <div class="section">
+    <div class="section-title">06 ｜ 今週中の着手チェックリスト</div>
+    <div class="checklist">
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div>
+          <div class="check-text">GitHubアカウントにリポジトリ「asa-ai-lab-breathing-habit」を作成する</div>
+          <div class="check-tool">GitHub → New Repository → Private → README初期化</div>
+        </div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div>
+          <div class="check-text">CursorでリポジトリをCloneして開き、フォルダ構成（reports / gas / prompts / data）を作成する</div>
+          <div class="check-tool">Cursor → Open Folder → 構成作成 → 初回commit</div>
+        </div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div>
+          <div class="check-text">Phase 1〜5のHTMLレポートをreports/フォルダに保存してcommitする</div>
+          <div class="check-tool">これまでのアウトプットをそのまま資産化</div>
+        </div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div>
+          <div class="check-text">LINE公式アカウントを無料プランで開設する</div>
+          <div class="check-tool">LINE for Business → 無料プラン → メッセージ月1000通まで無料</div>
+        </div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div>
+          <div class="check-text">CursorでLINEリマインダーGASスクリプトを作成し、gas/フォルダにcommitする</div>
+          <div class="check-tool">Cursor AIチャットに「毎朝7時にLINE配信するGASを書いて」と依頼するだけ</div>
+        </div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div>
+          <div class="check-text">Claudeで「先生からの一言」プロンプトテンプレートを完成させ、prompts/フォルダに保存する</div>
+          <div class="check-tool">Claude → プロンプト作成 → .md保存 → commit</div>
+        </div>
+      </div>
+      <div class="check-item">
+        <div class="check-box"></div>
+        <div>
+          <div class="check-text">既存生徒10〜15人に「一緒に試してほしい」と声をかける</div>
+          <div class="check-tool">正直に「実験に付き合ってほしい」という伝え方でOK。信頼関係が武器</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Next Steps -->
+  <div class="next">
+    <div class="next-title">🎉 全Phase完了 ｜ ここからは Build–Measure–Learn を回し続ける</div>
+    <div class="next-item">
+      <div class="next-num">→</div>
+      <div>
+        <div class="next-text">Week 1のインフラ構築が完了したら「動いたよ！」と教えてください。GASコードのレビュー・プロンプトの改善・KPI分析など、各ループで一緒に伴走します。</div>
+        <div class="next-phase">Build–Measure–Learn Loop 継続</div>
+      </div>
+    </div>
+    <div class="next-item">
+      <div class="next-num">→</div>
+      <div>
+        <div class="next-text">7日継続率・フィードバックのデータが集まったら、回答分析（Phase 1と同様）を一緒にやりましょう。データがあれば次のループの設計が格段に精度が上がります。</div>
+        <div class="next-phase">Loop 2 設計</div>
+      </div>
+    </div>
+    <div class="next-item">
+      <div class="next-num">→</div>
+      <div>
+        <div class="next-text">30日継続率50%以上を達成したら、有料化（月額サブスク）の設計フェーズへ。価格設定・決済導線・解約防止設計を一緒に作れます。</div>
+        <div class="next-phase">マネタイズフェーズへ</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Serif+JP:wght@400;500&family=Noto+Sans+JP:wght@300;400;500:ital,wght@0,400;0,600;1,400&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#FAF8F4;color:#1E1E1C;font-family:'Noto Sans JP',sans-serif;min-height:100vh;padding:40px 24px;}
+.container{max-width:960px;margin:0 auto;}
+
+/* Header */
+.header{text-align:center;margin-bottom:48px;padding:40px;border:1px solid rgba(42,122,111,0.2);background:rgba(42,122,111,0.02);position:relative;overflow:hidden;}
+.header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#2A7A6F,transparent);}
+.eyebrow{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.35em;color:#C4602A;text-transform:uppercase;margin-bottom:12px;}
+.main-title{font-size:28px;font-weight:700;letter-spacing:0.05em;margin-bottom:8px;}
+.sub{font-family:'Cormorant Garamond',serif;font-size:16px;color:#6B6A66;font-style:italic;}
+
+/* KPI cards */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:40px;}
+.kpi-card{background:#F0EBE0;border:1px solid rgba(42,122,111,0.2);padding:24px 16px;text-align:center;position:relative;overflow:hidden;}
+.kpi-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#2A7A6F,transparent);}
+.kpi-num{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:600;color:#2A7A6F;line-height:1;}
+.kpi-label{font-size:11px;color:#6B6A66;margin-top:8px;letter-spacing:0.08em;}
+.kpi-sub{font-size:10px;color:#A8A39E;margin-top:4px;}
+
+/* Section */
+.section{margin-bottom:40px;}
+.section-title{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.3em;color:#C4602A;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:12px;}
+.section-title::after{content:'';flex:1;height:1px;background:#E0DAD0;}
+
+/* 2-col grid */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.card{background:#F0EBE0;border:1px solid rgba(0,0,0,0.07);padding:24px;}
+
+/* Bar chart */
+.bar-row{display:flex;align-items:center;margin-bottom:14px;gap:12px;}
+.bar-label{font-size:12px;color:#6B6A66;min-width:200px;line-height:1.4;}
+.bar-wrap{flex:1;background:rgba(0,0,0,0.06);height:28px;position:relative;border-radius:2px;}
+.bar-fill{height:100%;border-radius:2px;display:flex;align-items:center;padding-left:10px;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:#fff;transition:width 1s ease;}
+.bar-fill.gold{background:linear-gradient(90deg,#2A7A6F,#3A9A8F);}
+.bar-fill.blue{background:linear-gradient(90deg,#C4602A,#D4703A);}
+.bar-fill.teal{background:linear-gradient(90deg,#2A7A6F,#4A9A8F);}
+.bar-count{font-family:'Space Mono',monospace;font-size:12px;color:#2A7A6F;min-width:28px;text-align:right;}
+
+/* Donut */
+.donut-wrap{display:flex;align-items:center;justify-content:center;gap:32px;padding:16px 0;}
+.donut-legend{display:flex;flex-direction:column;gap:12px;}
+.legend-item{display:flex;align-items:center;gap:10px;font-size:12px;color:#6B6A66;}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+
+/* Quadrant */
+.quadrant{position:relative;width:100%;padding-top:100%;background:#F0EBE0;border:1px solid rgba(0,0,0,0.07);}
+.quadrant-inner{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;}
+.q-cell{padding:16px;border:1px solid rgba(0,0,0,0.06);display:flex;flex-direction:column;gap:6px;}
+.q-cell.active{background:rgba(42,122,111,0.04);}
+.q-label{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:0.15em;color:#A8A39E;text-transform:uppercase;}
+.q-tag{font-size:10px;background:rgba(42,122,111,0.12);border:1px solid rgba(42,122,111,0.25);color:#2A7A6F;padding:3px 8px;border-radius:2px;display:inline-block;}
+.q-tag.blue{background:rgba(196,96,42,0.12);border-color:rgba(196,96,42,0.3);color:#D4703A;}
+.axis-label-x{position:absolute;bottom:-28px;width:100%;display:flex;justify-content:space-between;font-size:10px;color:#A8A39E;font-family:'Space Mono',monospace;}
+.axis-label-y{position:absolute;left:-36px;height:100%;display:flex;flex-direction:column;justify-content:space-between;font-size:10px;color:#A8A39E;font-family:'Space Mono',monospace;}
+.axis-center-x{position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(0,0,0,0.07);}
+.axis-center-y{position:absolute;top:50%;left:0;right:0;height:1px;background:rgba(0,0,0,0.07);}
+
+/* Insight box */
+.insight{background:rgba(42,122,111,0.05);border-left:3px solid #2A7A6F;padding:16px 20px;margin-bottom:12px;}
+.insight-title{font-size:12px;font-weight:700;color:#C4602A;margin-bottom:6px;letter-spacing:0.05em;}
+.insight-body{font-size:12px;color:#6B6A66;line-height:1.7;}
+
+/* Persona */
+.persona-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.persona-card{background:#F0EBE0;border:1px solid rgba(0,0,0,0.07);padding:20px;}
+.persona-name{font-size:13px;font-weight:700;color:#1E1E1C;margin-bottom:4px;}
+.persona-attr{font-size:10px;color:#9A9590;margin-bottom:12px;font-family:'Space Mono',monospace;}
+.persona-barrier{font-size:11px;color:#6B6A66;line-height:1.6;}
+.persona-tag{font-size:9px;background:rgba(42,122,111,0.1);border:1px solid rgba(42,122,111,0.2);color:#2A7A6F;padding:2px 8px;margin-top:8px;display:inline-block;}
+
+/* Quote */
+.quotes{display:flex;flex-direction:column;gap:12px;}
+.quote{background:#F0EBE0;border:1px solid rgba(0,0,0,0.06);padding:16px 20px;border-left:3px solid rgba(42,122,111,0.3);}
+.quote-text{font-size:12px;color:#6B6A66;line-height:1.8;font-style:italic;}
+.quote-attr{font-size:10px;color:#9A9590;margin-top:8px;font-family:'Space Mono',monospace;}
+
+/* Next steps */
+.next{background:#F0EBE0;border:1px solid rgba(42,122,111,0.2);padding:28px;margin-top:40px;}
+.next-title{font-size:14px;font-weight:700;color:#C4602A;margin-bottom:20px;letter-spacing:0.05em;}
+.next-item{display:flex;align-items:flex-start;gap:16px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.06);}
+.next-item:last-child{border-bottom:none;}
+.next-num{font-family:'Space Mono',monospace;font-size:11px;color:#2A7A6F;min-width:24px;margin-top:2px;}
+.next-text{font-size:13px;color:#6B6A66;line-height:1.6;}
+.next-phase{font-size:9px;color:#C4602A;font-family:'Space Mono',monospace;margin-top:4px;letter-spacing:0.1em;}
+
+/* App interest badge */
+.badge{display:inline-block;padding:4px 12px;border-radius:2px;font-size:10px;font-family:'Space Mono',monospace;}
+.badge.yes{background:rgba(42,122,111,0.1);border:1px solid rgba(42,122,111,0.3);color:#2A7A6F;}
+.badge.maybe{background:rgba(42,122,111,0.1);border:1px solid rgba(42,122,111,0.3);color:#2A7A6F;}
+
+.tag-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+.tag{font-size:10px;border:1px solid rgba(0,0,0,0.08);color:#6B6A66;padding:3px 10px;}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="eyebrow">Phase 01 — Survey Analysis Report</div>
+    <div class="main-title">呼吸習慣プロジェクト｜アンケート回答分析</div>
+    <div class="sub">n=7 ／ 2026年 ／ asa AI Lab</div>
+  </div>
+
+  <!-- KPI -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-num">7</div>
+      <div class="kpi-label">回答者数</div>
+      <div class="kpi-sub">30〜50代女性</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-num">100%</div>
+      <div class="kpi-label">アプリ意向あり</div>
+      <div class="kpi-sub">ぜひ＋内容次第</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-num">86%</div>
+      <div class="kpi-label">習慣化意欲あり</div>
+      <div class="kpi-sub">強く＋なんとなく</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-num">71%</div>
+      <div class="kpi-label">「忘れる」が障壁</div>
+      <div class="kpi-sub">最多障壁 5/7人</div>
+    </div>
+  </div>
+
+  <!-- ① 定量サマリー -->
+  <div class="section">
+    <div class="section-title">01 ｜ 定量サマリー</div>
+    <div class="grid-2">
+
+      <!-- 障壁ランキング -->
+      <div class="card">
+        <div style="font-size:12px;color:#6B6A66;letter-spacing:0.1em;margin-bottom:20px;font-family:'Space Mono',monospace;">BARRIER RANKING</div>
+        <div class="bar-row">
+          <div class="bar-label">そもそも思い出さない・忘れる</div>
+          <div class="bar-wrap"><div class="bar-fill gold" style="width:71%">5人</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">忙しくて時間がとれない</div>
+          <div class="bar-wrap"><div class="bar-fill gold" style="width:43%">3人</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">やり方がわからなくなる</div>
+          <div class="bar-wrap"><div class="bar-fill blue" style="width:29%">2人</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">効果を実感しにくい</div>
+          <div class="bar-wrap"><div class="bar-fill blue" style="width:29%">2人</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">面倒に感じる</div>
+          <div class="bar-wrap"><div class="bar-fill teal" style="width:14%">1人</div></div>
+        </div>
+      </div>
+
+      <!-- あったら嬉しいサポート -->
+      <div class="card">
+        <div style="font-size:12px;color:#6B6A66;letter-spacing:0.1em;margin-bottom:20px;font-family:'Space Mono',monospace;">SUPPORT NEEDS</div>
+        <div class="bar-row">
+          <div class="bar-label">記録・達成感が見える仕組み</div>
+          <div class="bar-wrap"><div class="bar-fill gold" style="width:86%">6人</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">短い動画ガイド</div>
+          <div class="bar-wrap"><div class="bar-fill gold" style="width:71%">5人</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">インストラクターからの一言</div>
+          <div class="bar-wrap"><div class="bar-fill blue" style="width:43%">3人</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">スマホのリマインダー</div>
+          <div class="bar-wrap"><div class="bar-fill teal" style="width:29%">2人</div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">仲間と一緒にできる仕組み</div>
+          <div class="bar-wrap"><div class="bar-fill teal" style="width:29%">2人</div></div>
+        </div>
+      </div>
+
+      <!-- 習慣化意欲 × アプリ意向 -->
+      <div class="card">
+        <div style="font-size:12px;color:#6B6A66;letter-spacing:0.1em;margin-bottom:16px;font-family:'Space Mono',monospace;">習慣化意欲 vs アプリ意向</div>
+        <svg viewBox="0 0 300 160" width="100%">
+          <!-- 習慣化意欲 -->
+          <text x="0" y="14" font-size="10" fill="#9A9590" font-family="Space Mono">習慣化意欲</text>
+          <rect x="0" y="22" width="214" height="20" fill="#2A7A6F" opacity="0.8" rx="2"/>
+          <text x="218" y="36" font-size="10" fill="#2A7A6F" font-family="Space Mono">強く 5人</text>
+          <rect x="0" y="48" width="60" height="20" fill="#C4602A" opacity="0.7" rx="2"/>
+          <text x="64" y="62" font-size="10" fill="#D4703A" font-family="Space Mono">なんとなく 2人</text>
+
+          <!-- アプリ意向 -->
+          <text x="0" y="100" font-size="10" fill="#9A9590" font-family="Space Mono">アプリ意向</text>
+          <rect x="0" y="108" width="129" height="20" fill="#2A7A6F" opacity="0.7" rx="2"/>
+          <text x="133" y="122" font-size="10" fill="#2A7A6F" font-family="Space Mono">ぜひ 3人</text>
+          <rect x="0" y="134" width="172" height="20" fill="#2A7A6F" opacity="0.5" rx="2"/>
+          <text x="176" y="148" font-size="10" fill="#2A7A6F" font-family="Space Mono">内容次第 4人</text>
+        </svg>
+      </div>
+
+      <!-- 実践頻度 -->
+      <div class="card">
+        <div style="font-size:12px;color:#6B6A66;letter-spacing:0.1em;margin-bottom:16px;font-family:'Space Mono',monospace;">実践頻度 vs 理想頻度</div>
+        <svg viewBox="0 0 300 160" width="100%">
+          <text x="0" y="14" font-size="10" fill="#9A9590" font-family="Space Mono">現在の実践</text>
+          <rect x="0" y="22" width="257" height="20" fill="#C4602A" opacity="0.7" rx="2"/>
+          <text x="261" y="36" font-size="10" fill="#D4703A" font-family="Space Mono">たまにある 6人</text>
+          <rect x="0" y="48" width="43" height="20" fill="#C4602A" opacity="0.5" rx="2"/>
+          <text x="47" y="62" font-size="10" fill="#5a7a9a" font-family="Space Mono">ほぼない 1人</text>
+
+          <text x="0" y="100" font-size="10" fill="#9A9590" font-family="Space Mono">理想の頻度</text>
+          <rect x="0" y="108" width="257" height="20" fill="#2A7A6F" opacity="0.8" rx="2"/>
+          <text x="261" y="122" font-size="10" fill="#2A7A6F" font-family="Space Mono">毎日 6人</text>
+          <rect x="0" y="134" width="43" height="20" fill="#7a6040" opacity="0.6" rx="2"/>
+          <text x="47" y="148" font-size="10" fill="#9a8060" font-family="Space Mono">気が向いたら 1人</text>
+        </svg>
+        <div class="insight" style="margin-top:16px;margin-bottom:0;">
+          <div class="insight-title">💡 ギャップが大きい</div>
+          <div class="insight-body">「毎日やりたい」のに「たまにしかできていない」。意欲と現実の乖離が明確。</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ② 4象限マップ -->
+  <div class="section">
+    <div class="section-title">02 ｜ 障壁の分類マップ（4象限）</div>
+    <div class="grid-2">
+      <div>
+        <div style="position:relative;margin:20px 0 40px 40px;">
+          <!-- 象限ラベル -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;border:1px solid rgba(0,0,0,0.07);">
+
+            <!-- 左上: 意識高い × 外的障壁 -->
+            <div style="background:#F0EBE0;padding:20px;min-height:160px;border-right:1px solid rgba(0,0,0,0.07);border-bottom:1px solid rgba(0,0,0,0.07);">
+              <div style="font-family:'Space Mono',monospace;font-size:8px;color:#C4602A;letter-spacing:0.15em;margin-bottom:12px;">意識高い × 外的障壁</div>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <span style="font-size:11px;background:rgba(42,122,111,0.12);border:1px solid rgba(42,122,111,0.25);color:#2A7A6F;padding:3px 8px;display:inline-block;">40代・3年以上</span>
+                <span style="font-size:11px;background:rgba(42,122,111,0.12);border:1px solid rgba(42,122,111,0.25);color:#2A7A6F;padding:3px 8px;display:inline-block;">30代・半年〜1年</span>
+                <span style="font-size:11px;background:rgba(42,122,111,0.12);border:1px solid rgba(42,122,111,0.25);color:#2A7A6F;padding:3px 8px;display:inline-block;">50代・3年以上</span>
+              </div>
+              <div style="font-size:10px;color:#9A9590;margin-top:10px;">やりたい・でも忙しい</div>
+            </div>
+
+            <!-- 右上: 意識高い × 内的障壁 -->
+            <div style="background:#F0EBE0;padding:20px;min-height:160px;border-bottom:1px solid rgba(0,0,0,0.07);">
+              <div style="font-family:'Space Mono',monospace;font-size:8px;color:#C4602A;letter-spacing:0.15em;margin-bottom:12px;">意識高い × 内的障壁</div>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <span style="font-size:11px;background:rgba(196,96,42,0.12);border:1px solid rgba(196,96,42,0.3);color:#D4703A;padding:3px 8px;display:inline-block;">40代・半年〜1年</span>
+                <span style="font-size:11px;background:rgba(196,96,42,0.12);border:1px solid rgba(196,96,42,0.3);color:#D4703A;padding:3px 8px;display:inline-block;">50代・1〜3年</span>
+              </div>
+              <div style="font-size:10px;color:#9A9590;margin-top:10px;">やりたい・でもやり方がわからない</div>
+            </div>
+
+            <!-- 左下: 意識低い × 外的障壁 -->
+            <div style="background:#F0EBE0;padding:20px;min-height:140px;border-right:1px solid rgba(0,0,0,0.07);">
+              <div style="font-family:'Space Mono',monospace;font-size:8px;color:#A8A39E;letter-spacing:0.15em;margin-bottom:12px;">意識低め × 外的障壁</div>
+              <div style="font-size:10px;color:#B8B3AE;">（該当なし）</div>
+            </div>
+
+            <!-- 右下: 意識低い × 内的障壁 -->
+            <div style="background:#F0EBE0;padding:20px;min-height:140px;">
+              <div style="font-family:'Space Mono',monospace;font-size:8px;color:#A8A39E;letter-spacing:0.15em;margin-bottom:12px;">意識低め × 内的障壁</div>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <span style="font-size:11px;background:rgba(90,90,100,0.12);border:1px solid rgba(90,90,100,0.25);color:#6B6A66;padding:3px 8px;display:inline-block;">30代・1〜3年</span>
+                <span style="font-size:11px;background:rgba(90,90,100,0.12);border:1px solid rgba(90,90,100,0.25);color:#6B6A66;padding:3px 8px;display:inline-block;">40代・1〜3年</span>
+              </div>
+              <div style="font-size:10px;color:#9A9590;margin-top:10px;">なんとなくやりたいが優先度低め</div>
+            </div>
+          </div>
+
+          <!-- 軸ラベル -->
+          <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:9px;color:#A8A39E;font-family:'Space Mono',monospace;">
+            <span>← 外的障壁（時間・環境）</span>
+            <span>内的障壁（やり方・気持ち） →</span>
+          </div>
+          <div style="position:absolute;left:-40px;top:50%;transform:translateY(-50%) rotate(-90deg);font-size:9px;color:#A8A39E;font-family:'Space Mono',monospace;white-space:nowrap;">
+            意識低め ↑ 意識高い
+          </div>
+        </div>
+      </div>
+
+      <!-- 右カラム：解釈 -->
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="insight">
+          <div class="insight-title">🔑 最多グループ（3人）｜意識高い × 外的障壁</div>
+          <div class="insight-body">「やりたい気持ちは強い」のに「忙しさと忘れること」が邪魔をしているタイプ。リマインダーと短時間設計で解決できる可能性が高い。</div>
+        </div>
+        <div class="insight">
+          <div class="insight-title">📚 重要グループ（2人）｜意識高い × 内的障壁</div>
+          <div class="insight-body">「やり方がわからない」「あっているか不安」という認知的障壁。動画ガイドとフィードバック機能が鍵。</div>
+        </div>
+        <div class="insight">
+          <div class="insight-title">⚡ 要注目（2人）｜意識低め × 内的障壁</div>
+          <div class="insight-body">優先度がまだ低い層。まず「効果を体感させる」ことで意欲を引き上げる設計が必要。</div>
+        </div>
+        <div style="background:#F0EBE0;border:1px solid rgba(0,0,0,0.07);padding:16px;">
+          <div style="font-size:11px;color:#2A7A6F;margin-bottom:10px;font-weight:700;">共通の最大障壁</div>
+          <div style="font-size:20px;font-weight:700;color:#1E1E1C;letter-spacing:0.03em;">「そもそも思い出さない」</div>
+          <div style="font-size:11px;color:#6B6A66;margin-top:6px;">7人中5人（71%）がこれを挙げる。<br>全象限を横断する最優先解決テーマ。</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ③ ペルソナ分類 -->
+  <div class="section">
+    <div class="section-title">03 ｜ ペルソナ分類</div>
+    <div class="persona-grid">
+      <div class="persona-card">
+        <div class="persona-name">🏃 忙しい実践者</div>
+        <div class="persona-attr">40代・50代 / ヨガ歴3年以上</div>
+        <div class="persona-barrier">やりたい意欲は高い。ただし忙しさで「いつの間にか忘れる」サイクルにはまっている。クラス直後は動くが日常に戻ると途切れる。</div>
+        <div class="persona-tag">3人 / リマインダー最優先</div>
+      </div>
+      <div class="persona-card">
+        <div class="persona-name">🤔 やり方迷子</div>
+        <div class="persona-attr">40代・50代 / ヨガ歴1〜2年</div>
+        <div class="persona-barrier">やりたい気持ちはあるが、「正しくできているか」が不安で踏み出せない。効果も感じにくいため継続動機が弱まりやすい。</div>
+        <div class="persona-tag">2人 / 動画ガイド最優先</div>
+      </div>
+      <div class="persona-card">
+        <div class="persona-name">💭 まだ本気じゃない層</div>
+        <div class="persona-attr">30代・40代 / ヨガ歴1〜3年</div>
+        <div class="persona-barrier">「なんとなくやりたい」程度で、日常の優先度が低い。仕組みや仲間との共有など「楽しさ」から入る設計が効果的。</div>
+        <div class="persona-tag">2人 / 楽しさ・達成感優先</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ 自由記述から感情ワード抽出 -->
+  <div class="section">
+    <div class="section-title">04 ｜ 感情ワード分析（自由記述）</div>
+    <div class="quotes">
+      <div class="quote">
+        <div class="quote-text">「教室直後だと結構やるが忙しくなってやらなくなるとずっと思い出さなくなってしまう。呼吸はとても大切と思っているので是非継続できるようになりたい！」</div>
+        <div class="quote-attr">40代・3年以上 ／ キーワード：忘れる、大切、継続したい</div>
+      </div>
+      <div class="quote">
+        <div class="quote-text">「どこに空気を入れるのか、吸う吐くの長さなど、身体の使い方がうまくいっているのかイマイチわからない。考えてしまう。」</div>
+        <div class="quote-attr">40代・半年〜1年 ／ キーワード：わからない、不安、考えすぎてしまう</div>
+      </div>
+      <div class="quote">
+        <div class="quote-text">「一日のどのタイミングでやればいいか分からない」「習慣化できるといいなと思います。楽しく継続できるサポートアプリのようなものがあれば嬉しいです！！」</div>
+        <div class="quote-attr">30代・半年〜1年 ／ キーワード：タイミング不明、楽しく、サポートしてほしい</div>
+      </div>
+      <div class="quote">
+        <div class="quote-text">「先生の呼吸法を少しでも習得できると何があってもこころ強く穏やかに過ごしていけそう、やってみたいと思い参加しています」</div>
+        <div class="quote-attr">50代・1〜3年 ／ キーワード：心強い、穏やか、先生への信頼</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;background:#F0EBE0;border:1px solid rgba(0,0,0,0.07);padding:16px;">
+      <div style="font-size:11px;color:#6B6A66;margin-bottom:10px;font-family:'Space Mono',monospace;">頻出感情ワード</div>
+      <div class="tag-row">
+        <span class="tag" style="color:#2A7A6F;border-color:rgba(42,122,111,0.3);">忘れる・思い出せない</span>
+        <span class="tag" style="color:#2A7A6F;border-color:rgba(42,122,111,0.3);">わからない・不安</span>
+        <span class="tag" style="color:#D4703A;border-color:rgba(100,140,180,0.3);">継続したい</span>
+        <span class="tag" style="color:#D4703A;border-color:rgba(100,140,180,0.3);">楽しく続けたい</span>
+        <span class="tag" style="color:#2A7A6F;border-color:rgba(42,122,111,0.3);">大切だと思っている</span>
+        <span class="tag" style="color:#2A7A6F;border-color:rgba(42,122,111,0.3);">先生への信頼</span>
+        <span class="tag">タイミングがわからない</span>
+        <span class="tag">時間が作れない</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑤ アプリ設計への示唆 -->
+  <div class="section">
+    <div class="section-title">05 ｜ MVP設計への示唆</div>
+    <div class="grid-2">
+      <div class="insight" style="margin-bottom:0;">
+        <div class="insight-title">🥇 最優先機能（全員が望む）</div>
+        <div class="insight-body">
+          <b style="color:#1E1E1C;">記録・達成感の可視化</b>（6/7人）<br>
+          → ストリーク表示、バッジ、カレンダー記録<br><br>
+          <b style="color:#1E1E1C;">短い動画ガイド</b>（5/7人）<br>
+          → 3〜5分の呼吸法動画。とっとさんが顔出しで信頼度UP
+        </div>
+      </div>
+      <div class="insight" style="margin-bottom:0;">
+        <div class="insight-title">🥈 重要機能（半数以上）</div>
+        <div class="insight-body">
+          <b style="color:#1E1E1C;">インストラクターからの一言</b>（3/7人）<br>
+          → プッシュ通知 or LINE連携での応援メッセージ<br><br>
+          <b style="color:#1E1E1C;">リマインダー機能</b>（2/7人）<br>
+          → 「忘れる」問題の直接解決策
+        </div>
+      </div>
+    </div>
+    <div class="insight" style="margin-top:16px;">
+      <div class="insight-title">💡 MVPの最小構成案（アプリ前の検証フェーズ）</div>
+      <div class="insight-body">
+        LINE配信でリマインダー → Googleフォームで実施記録 → スプレッドシートで達成カレンダー化<br>
+        これだけで「忘れる」「記録できない」「動画がない」の3大障壁を0円で検証できる。
+      </div>
+    </div>
+  </div>
+
+  <!-- Next Steps -->
+  <div class="next">
+    <div class="next-title">→ Next Steps</div>
+    <div class="next-item">
+      <div class="next-num">01</div>
+      <div>
+        <div class="next-text">対面インタビューで「忘れる」の深層を掘り下げる（特に忙しい実践者タイプ）</div>
+        <div class="next-phase">PHASE 01 継続</div>
+      </div>
+    </div>
+    <div class="next-item">
+      <div class="next-num">02</div>
+      <div>
+        <div class="next-text">SWOT分析へ進む。競合（Calm / Headspace / 習慣化アプリ）との差別化軸を設定</div>
+        <div class="next-phase">→ PHASE 02</div>
+      </div>
+    </div>
+    <div class="next-item">
+      <div class="next-num">03</div>
+      <div>
+        <div class="next-text">とっとさん自身の強み（ヨガ指導歴・Okinawa拠点・DX知見・アロマ）をSWOTに組み込む</div>
+        <div class="next-phase">→ PHASE 02</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

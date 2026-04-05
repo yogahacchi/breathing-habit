@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Serif+JP:wght@400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#FAF8F4;color:#1E1E1C;font-family:'Noto Sans JP',sans-serif;padding:40px 24px;}
+.container{max-width:980px;margin:0 auto;}
+
+.header{text-align:center;margin-bottom:48px;padding:40px;border:1px solid rgba(42,122,111,0.2);background:rgba(42,122,111,0.02);position:relative;}
+.header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#2A7A6F,transparent);}
+.eyebrow{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.35em;color:#C4602A;text-transform:uppercase;margin-bottom:12px;}
+.main-title{font-size:26px;font-weight:700;letter-spacing:0.05em;margin-bottom:8px;}
+.sub{font-family:'Cormorant Garamond',serif;font-size:15px;color:#6B6A66;font-style:italic;}
+
+.section-title{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.3em;color:#C4602A;text-transform:uppercase;margin-bottom:24px;display:flex;align-items:center;gap:12px;}
+.section-title::after{content:'';flex:1;height:1px;background:#E0DAD0;}
+.section{margin-bottom:52px;}
+
+/* Resource banner */
+.resource-banner{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:48px;}
+.r-card{background:#F0EBE0;border:1px solid rgba(0,0,0,0.07);padding:16px;text-align:center;}
+.r-num{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;color:#2A7A6F;line-height:1;}
+.r-label{font-size:10px;color:#6B6A66;margin-top:6px;letter-spacing:0.06em;}
+
+/* KGI big card */
+.kgi-card{background:rgba(42,122,111,0.04);border:1px solid rgba(42,122,111,0.3);padding:36px;margin-bottom:48px;position:relative;overflow:hidden;text-align:center;}
+.kgi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#2A7A6F,transparent);}
+.kgi-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.3em;color:#C4602A;text-transform:uppercase;margin-bottom:16px;}
+.kgi-main{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:#1A5049;line-height:1.4;margin-bottom:16px;}
+.kgi-main span{color:#2A7A6F;}
+.kgi-sub{font-size:12px;color:#6B6A66;line-height:1.8;}
+.kgi-metrics{display:flex;justify-content:center;gap:40px;margin-top:24px;padding-top:24px;border-top:1px solid rgba(0,0,0,0.07);}
+.kgi-metric-item{text-align:center;}
+.kgi-metric-num{font-family:'Space Mono',monospace;font-size:22px;color:#2A7A6F;font-weight:700;}
+.kgi-metric-label{font-size:10px;color:#9A9590;margin-top:4px;}
+
+/* Phase timeline */
+.phase-timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-bottom:48px;}
+.phase-col{background:#F0EBE0;padding:24px;}
+.phase-col-header{margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid rgba(0,0,0,0.06);}
+.phase-col-period{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:0.2em;color:#A8A39E;text-transform:uppercase;margin-bottom:6px;}
+.phase-col-name{font-size:13px;font-weight:700;color:#1E1E1C;}
+.phase-col-goal{font-size:11px;color:#2A7A6F;margin-top:4px;}
+
+/* KPI cards */
+.kpi-block{margin-bottom:16px;}
+.kpi-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.06);}
+.kpi-item:last-child{border-bottom:none;}
+.kpi-icon{font-size:14px;min-width:20px;margin-top:1px;}
+.kpi-content{}
+.kpi-name{font-size:12px;font-weight:500;color:#2A3A38;margin-bottom:3px;}
+.kpi-target{font-family:'Space Mono',monospace;font-size:11px;color:#2A7A6F;}
+.kpi-note{font-size:10px;color:#A8A39E;margin-top:2px;}
+
+/* KDI table */
+.kdi-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:32px;}
+.kdi-card{background:#F0EBE0;border:1px solid rgba(0,0,0,0.07);padding:24px;}
+.kdi-header{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.2em;color:#C4602A;text-transform:uppercase;margin-bottom:16px;}
+.kdi-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.04);}
+.kdi-item:last-child{border-bottom:none;}
+.kdi-day{font-family:'Space Mono',monospace;font-size:9px;color:#A8A39E;min-width:60px;padding-top:2px;}
+.kdi-action{font-size:12px;color:#6B6A66;line-height:1.5;}
+.kdi-time{font-size:10px;color:#2A7A6F;margin-top:2px;font-family:'Space Mono',monospace;}
+
+/* AI tools */
+.tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px;}
+.tool-card{background:#F0EBE0;border:1px solid rgba(0,0,0,0.07);padding:20px;}
+.tool-name{font-size:13px;font-weight:700;color:#1E1E1C;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+.tool-badge{font-size:8px;font-family:'Space Mono',monospace;padding:2px 8px;border-radius:2px;background:rgba(42,122,111,0.1);border:1px solid rgba(42,122,111,0.2);color:#2A7A6F;}
+.tool-use{font-size:11px;color:#6B6A66;line-height:1.7;}
+.tool-task{font-size:10px;color:#C4602A;margin-top:8px;font-family:'Space Mono',monospace;}
+
+/* Workload design */
+.workload{background:#F0EBE0;border:1px solid rgba(0,0,0,0.07);padding:28px;margin-bottom:32px;}
+.wl-title{font-size:13px;font-weight:700;color:#1E1E1C;margin-bottom:20px;}
+.wl-row{display:flex;align-items:center;gap:16px;margin-bottom:12px;}
+.wl-label{font-size:12px;color:#6B6A66;min-width:160px;}
+.wl-bar-wrap{flex:1;background:rgba(0,0,0,0.06);height:24px;border-radius:2px;}
+.wl-bar{height:100%;border-radius:2px;display:flex;align-items:center;padding-left:10px;font-family:'Space Mono',monospace;font-size:10px;color:#FAF8F4;font-weight:700;}
+.wl-bar.gold{background:linear-gradient(90deg,#2A7A6F,#3A9A8F);}
+.wl-bar.blue{background:linear-gradient(90deg,#C4602A,#D4703A);}
+.wl-bar.teal{background:linear-gradient(90deg,#2A7A6F,#4A9A8F);}
+.wl-bar.gray{background:rgba(100,100,110,0.5);}
+.wl-total{margin-top:16px;padding-top:16px;border-top:1px solid rgba(0,0,0,0.07);font-family:'Space Mono',monospace;font-size:11px;color:#2A7A6F;text-align:right;}
+
+/* Copy advice */
+.copy-compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.copy-box{background:#F0EBE0;border:1px solid rgba(0,0,0,0.07);padding:20px;}
+.copy-box-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.2em;color:#A8A39E;text-transform:uppercase;margin-bottom:12px;}
+.copy-box-text{font-size:13px;font-weight:700;color:#1E1E1C;line-height:1.5;margin-bottom:8px;}
+.copy-box-sub{font-size:11px;color:#6B6A66;line-height:1.7;}
+.copy-box-eval{font-size:10px;color:#2A7A6F;margin-top:10px;padding-top:10px;border-top:1px solid rgba(0,0,0,0.06);}
+.recommend{border-color:rgba(42,122,111,0.3);background:rgba(42,122,111,0.03);}
+
+/* insight */
+.insight{background:rgba(42,122,111,0.05);border-left:3px solid #2A7A6F;padding:16px 20px;margin-bottom:12px;}
+.insight-title{font-size:12px;font-weight:700;color:#C4602A;margin-bottom:6px;}
+.insight-body{font-size:12px;color:#6B6A66;line-height:1.7;}
+
+/* Alert */
+.alert{background:rgba(196,96,42,0.05);border-left:3px solid #C4602A;padding:16px 20px;margin-bottom:12px;}
+.alert-title{font-size:12px;font-weight:700;color:#C4602A;margin-bottom:6px;}
+.alert-body{font-size:12px;color:#6B6A66;line-height:1.7;}
+
+/* next */
+.next{background:#F0EBE0;border:1px solid rgba(42,122,111,0.2);padding:28px;margin-top:40px;}
+.next-title{font-size:14px;font-weight:700;color:#C4602A;margin-bottom:20px;}
+.next-item{display:flex;gap:16px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.06);}
+.next-item:last-child{border-bottom:none;}
+.next-num{font-family:'Space Mono',monospace;font-size:11px;color:#2A7A6F;min-width:24px;margin-top:2px;}
+.next-text{font-size:13px;color:#6B6A66;line-height:1.6;}
+.next-phase{font-size:9px;color:#C4602A;font-family:'Space Mono',monospace;margin-top:4px;letter-spacing:0.1em;}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="eyebrow">Phase 04 — Goal & Metrics Design</div>
+    <div class="main-title">呼吸習慣プロジェクト｜KGI / KPI / KDI設計</div>
+    <div class="sub">Define success. Measure what matters. Act every day. ／ asa AI Lab</div>
+  </div>
+
+  <!-- Resource summary -->
+  <div class="section">
+    <div class="section-title">00 ｜ リソース前提（設計の土台）</div>
+    <div class="resource-banner">
+      <div class="r-card">
+        <div class="r-num">15h</div>
+        <div class="r-label">週あたりの<br>プロジェクト時間</div>
+      </div>
+      <div class="r-card">
+        <div class="r-num">1人</div>
+        <div class="r-label">運営体制<br>（AI自動化で補完）</div>
+      </div>
+      <div class="r-card">
+        <div class="r-num">5本</div>
+        <div class="r-label">活用AIツール<br>Claude/Cursor/Genspark等</div>
+      </div>
+      <div class="r-card">
+        <div class="r-num">MVP</div>
+        <div class="r-label">現フェーズ<br>無料〜低価格スタート</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KGI -->
+  <div class="section">
+    <div class="section-title">01 ｜ KGI（最終ゴール指標）</div>
+    <div class="kgi-card">
+      <div class="kgi-label">Key Goal Indicator — 1年後に達成したい最終状態</div>
+      <div class="kgi-main">
+        「呼吸法を習慣化できた」ユーザーを<span>100人</span>つくり、<br>
+        継続率<span>60%以上</span>を維持した<br>
+        インストラクター伴走型プラットフォームを確立する
+      </div>
+      <div class="kgi-sub">
+        単なるアプリのダウンロード数ではなく「習慣化できた人の数」をKGIにする。<br>
+        これがCATWOEの変革（T）と直結し、存在意義そのものを測る指標になる。
+      </div>
+      <div class="kgi-metrics">
+        <div class="kgi-metric-item">
+          <div class="kgi-metric-num">100人</div>
+          <div class="kgi-metric-label">習慣化達成ユーザー数<br>（30日継続）</div>
+        </div>
+        <div class="kgi-metric-item">
+          <div class="kgi-metric-num">60%</div>
+          <div class="kgi-metric-label">30日継続率<br>（業界平均は10〜20%）</div>
+        </div>
+        <div class="kgi-metric-item">
+          <div class="kgi-metric-num">4.5+</div>
+          <div class="kgi-metric-label">ユーザー満足度<br>（5段階評価）</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase別KPI -->
+  <div class="section">
+    <div class="section-title">02 ｜ KPI（プロセス指標）フェーズ別設計</div>
+    <div class="phase-timeline">
+
+      <!-- Phase MVP -->
+      <div class="phase-col">
+        <div class="phase-col-header">
+          <div class="phase-col-period">Now → 1ヶ月</div>
+          <div class="phase-col-name">MVP検証フェーズ</div>
+          <div class="phase-col-goal">既存生徒7〜20人で仕組みを検証</div>
+        </div>
+        <div class="kpi-block">
+          <div class="kpi-item">
+            <div class="kpi-icon">📋</div>
+            <div class="kpi-content">
+              <div class="kpi-name">参加ユーザー数</div>
+              <div class="kpi-target">目標：10〜15人</div>
+              <div class="kpi-note">既存生徒からの声かけ</div>
+            </div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-icon">🔥</div>
+            <div class="kpi-content">
+              <div class="kpi-name">7日継続率</div>
+              <div class="kpi-target">目標：70%以上</div>
+              <div class="kpi-note">最初の壁を越えられるか</div>
+            </div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-icon">📹</div>
+            <div class="kpi-content">
+              <div class="kpi-name">ガイド動画視聴率</div>
+              <div class="kpi-target">目標：80%以上</div>
+              <div class="kpi-note">コンテンツへのエンゲージ</div>
+            </div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-icon">💬</div>
+            <div class="kpi-content">
+              <div class="kpi-name">感想フィードバック数</div>
+              <div class="kpi-target">目標：5件以上</div>
+              <div class="kpi-note">改善の材料を集める</div>
+            </div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-icon">⚙️</div>
+            <div class="kpi-content">
+              <div class="kpi-name">運営工数</div>
+              <div class="kpi-target">上限：週5時間</div>
+              <div class="kpi-note">15hのうち5hをMVP運営に</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 2 -->
+      <div class="phase-col">
+        <div class="phase-col-header">
+          <div class="phase-col-period">1〜3ヶ月</div>
+          <div class="phase-col-name">改善・拡大フェーズ</div>
+          <div class="phase-col-goal">30日継続の実績をつくる</div>
+        </div>
+        <div class="kpi-block">
+          <div class="kpi-item">
+            <div class="kpi-icon">📈</div>
+            <div class="kpi-content">
+              <div class="kpi-name">30日継続率</div>
+              <div class="kpi-target">目標：50%以上</div>
+              <div class="kpi-note">有料化判断の最重要指標</div>
+            </div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-icon">👥</div>
+            <div class="kpi-content">
+              <div class="kpi-name">累計参加者数</div>
+              <div class="kpi-target">目標：30〜50人</div>
+              <div class="kpi-note">紹介・口コミ経由を含む</div>
+            </div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-icon">⭐</div>
+            <div class="kpi-content">
+              <div class="kpi-name">満足度スコア</div>
+              <div class="kpi-target">目標：4.0以上/5</div>
+              <div class="kpi-note">月次アンケートで計測</div>
+            </div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-icon">📣</div>
+            <div class="kpi-content">
+              <div class="kpi-name">紹介・口コミ数</div>
+              <div class="kpi-target">目標：5件以上</div>
+              <div class="kpi-note">NPS的な指標として</div>
+            </div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-icon">🤖</div>
+            <div class="kpi-content">
+              <div class="kpi-name">自動化率</div>
+              <div class="kpi-target">目標：運営の60%自動化</div>
+              <div class="kpi-note">AIツール活用で工数削減</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase 3 -->
+      <div class="phase-col">
+        <div class="phase-col-header">
+          <div class="phase-col-period">3〜12ヶ月</div>
+          <div class="phase-col-name">有料化・スケールフェーズ</div>
+          <div class="phase-col-goal">KGI達成・収益化の確立</div>
+        </div>
+        <div class="kpi-block">
+          <div class="kpi-item">
+            <div class="kpi-icon">💰</div>
+            <div class="kpi-content">
+              <div class="kpi-name">有料転換率</div>
+              <div class="kpi-target">目標：40%以上</div>
+              <div class="kpi-note">無料体験→サブスク移行</div>
+            </div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-icon">🎯</div>
+            <div class="kpi-content">
+              <div class="kpi-name">習慣化達成者数</div>
+              <div class="kpi-target">目標：累計100人</div>
+              <div class="kpi-note">KGI直結の最重要KPI</div>
+            </div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-icon">📱</div>
+            <div class="kpi-content">
+              <div class="kpi-name">Instagram経由の新規</div>
+              <div class="kpi-target">目標：月10人以上</div>
+              <div class="kpi-note">クラス未参加者の獲得</div>
+            </div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-icon">💳</div>
+            <div class="kpi-content">
+              <div class="kpi-name">月次収益（MRR）</div>
+              <div class="kpi-target">目標：¥30,000〜/月</div>
+              <div class="kpi-note">50人×¥980 = ¥49,000想定</div>
+            </div>
+          </div>
+          <div class="kpi-item">
+            <div class="kpi-icon">🔄</div>
+            <div class="kpi-content">
+              <div class="kpi-name">解約率（チャーンレート）</div>
+              <div class="kpi-target">上限：月10%以下</div>
+              <div class="kpi-note">継続設計の品質指標</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- KDI -->
+  <div class="section">
+    <div class="section-title">03 ｜ KDI（日々の行動指標）週15時間の配分設計</div>
+    <div class="workload">
+      <div class="wl-title">週15時間の使い方（MVP期）</div>
+      <div class="wl-row">
+        <div class="wl-label">📹 コンテンツ制作（動画・投稿）</div>
+        <div class="wl-bar-wrap"><div class="wl-bar gold" style="width:40%">6h</div></div>
+      </div>
+      <div class="wl-row">
+        <div class="wl-label">🤖 AI活用・自動化構築</div>
+        <div class="wl-bar-wrap"><div class="wl-bar blue" style="width:27%">4h</div></div>
+      </div>
+      <div class="wl-row">
+        <div class="wl-label">👥 ユーザー対応・フィードバック分析</div>
+        <div class="wl-bar-wrap"><div class="wl-bar teal" style="width:20%">3h</div></div>
+      </div>
+      <div class="wl-row">
+        <div class="wl-label">📊 KPI計測・改善検討</div>
+        <div class="wl-bar-wrap"><div class="wl-bar gray" style="width:13%">2h</div></div>
+      </div>
+      <div class="wl-total">合計：15時間 / 週 ｜ 運営工数は自動化で徐々に圧縮する</div>
+    </div>
+
+    <div class="kdi-grid">
+      <div class="kdi-card">
+        <div class="kdi-header">Daily Actions ｜ 毎日やること</div>
+        <div class="kdi-item">
+          <div class="kdi-day">毎朝</div>
+          <div>
+            <div class="kdi-action">LINEリマインダーの配信確認（自動化後は確認のみ）</div>
+            <div class="kdi-time">5分</div>
+          </div>
+        </div>
+        <div class="kdi-item">
+          <div class="kdi-day">毎日</div>
+          <div>
+            <div class="kdi-action">Instagramへの投稿 or ストーリーズ（呼吸法・世界観発信）</div>
+            <div class="kdi-time">20〜30分</div>
+          </div>
+        </div>
+        <div class="kdi-item">
+          <div class="kdi-day">毎晩</div>
+          <div>
+            <div class="kdi-action">ユーザーの記録・反応を確認し、気づきをNotionにメモ</div>
+            <div class="kdi-time">10分</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="kdi-card">
+        <div class="kdi-header">Weekly Actions ｜ 週次でやること</div>
+        <div class="kdi-item">
+          <div class="kdi-day">週1回</div>
+          <div>
+            <div class="kdi-action">ユーザーへの「先生からの一言」メッセージを作成・送信</div>
+            <div class="kdi-time">30分</div>
+          </div>
+        </div>
+        <div class="kdi-item">
+          <div class="kdi-day">週1回</div>
+          <div>
+            <div class="kdi-action">KPI（継続率・視聴率・フィードバック）を計測・記録</div>
+            <div class="kdi-time">30分</div>
+          </div>
+        </div>
+        <div class="kdi-item">
+          <div class="kdi-day">週2〜3回</div>
+          <div>
+            <div class="kdi-action">動画ガイドの撮影・編集（3〜5分の短尺コンテンツ）</div>
+            <div class="kdi-time">2〜3時間</div>
+          </div>
+        </div>
+        <div class="kdi-item">
+          <div class="kdi-day">週1回</div>
+          <div>
+            <div class="kdi-action">AI自動化の改善・プロンプト調整（Claude / Dify / GAS）</div>
+            <div class="kdi-time">1〜2時間</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="insight">
+      <div class="insight-title">💡 KDIの鉄則：「毎日やること」は3つ以内に絞る</div>
+      <div class="insight-body">KDIが多すぎると運営者（とっとさん）が三日坊主になってしまう。皮肉なことに「習慣化サービスの運営者が習慣化できない」は最悪のリスク。毎日やることはリマインダー確認・Instagram・ユーザー確認の3つだけに固定する。</div>
+    </div>
+  </div>
+
+  <!-- AI Tools設計 -->
+  <div class="section">
+    <div class="section-title">04 ｜ AIツール活用設計（自動化ロードマップ）</div>
+    <div class="tools-grid">
+      <div class="tool-card">
+        <div class="tool-name">Claude <span class="tool-badge">主力</span></div>
+        <div class="tool-use">コンテンツ生成の中枢。「先生からの一言」メッセージ文の下書き、Instagram投稿文、ユーザーフィードバックの分析・要約、KPIレポートの解釈。プロンプト一発でとっとさんの文体に合わせた文章を量産できる。</div>
+        <div class="tool-task">→ 週4〜5hの文章作業を1〜2hに圧縮</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">Cursor <span class="tool-badge">開発</span></div>
+        <div class="tool-use">GASスクリプト・LINEBot・記録シートの自動化コードをAIペアプログラミングで構築。コーディング経験がなくても動くものが作れる。将来のアプリ化時にも最速で対応できる。</div>
+        <div class="tool-task">→ MVP自動化インフラの構築に投入</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">Genspark <span class="tool-badge">調査</span></div>
+        <div class="tool-use">競合調査・市場トレンド・ユーザーリサーチの深掘りに活用。「みんチャレのUX分析」「習慣化アプリの継続率事例」等をまとめて調査し、戦略の根拠を強化する。</div>
+        <div class="tool-task">→ Phase 2のSWOT補完・競合体験の代替に</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">Dify <span class="tool-badge">自動化</span></div>
+        <div class="tool-use">Claudeと組み合わせてリマインダー生成・フィードバック分析ワークフローを自動化。「ユーザーの記録データ → 分析 → 一言コメント生成 → LINE送信」の一連の流れをノーコードで構築。</div>
+        <div class="tool-task">→ 運営工数を週5h→2h以下に削減</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">GAS + LINE <span class="tool-badge">配信</span></div>
+        <div class="tool-use">Googleスプレッドシートの記録データとLINE公式アカウントを連携。毎朝のリマインダー・週次の達成レポート・先生からのメッセージを自動配信する基盤インフラ。</div>
+        <div class="tool-task">→ MVP期の主要配信チャネル</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-name">Notion <span class="tool-badge">管理</span></div>
+        <div class="tool-use">このプロジェクト全体のナレッジベース。Phase 1〜5の記録・KPI計測ダッシュボード・ユーザーフィードバックの蓄積・コンテンツのストック管理をすべてここに集約。</div>
+        <div class="tool-task">→ 「asa AI Lab」のプロジェクト管理中枢</div>
+      </div>
+    </div>
+    <div class="alert">
+      <div class="alert-title">⚠️ ツール増やしすぎに注意</div>
+      <div class="alert-body">AIツールが使えることは強みだが、MVP期に全部同時に使い始めると管理工数が逆に増える。まず「Claude + GAS + LINE + Notion」の4つだけで動かし、軌道に乗ったらDify・Cursorを追加する順番を推奨。</div>
+    </div>
+  </div>
+
+  <!-- キャッチコピーへのフィードバック -->
+  <div class="section">
+    <div class="section-title">05 ｜ キャッチコピーへのフィードバック</div>
+    <div class="copy-compare">
+      <div class="copy-box recommend">
+        <div class="copy-box-label">サブ案① ← おすすめ</div>
+        <div class="copy-box-text">呼吸法を「習慣」にするための、先生と歩む仕組みがここにあります。短い時間でいい。毎日続けるための、あなただけのサポートを。</div>
+        <div class="copy-box-eval">✓ 「先生と歩む」がCATWOEの世界観と直結<br>✓ 「短い時間でいい」がアンケートの障壁（忙しい）に直接刺さる<br>✓ 「あなただけのサポート」で個別感・温かみが出る</div>
+      </div>
+      <div class="copy-box">
+        <div class="copy-box-label">サブ案②</div>
+        <div class="copy-box-text">道具はいらない。あるのは先生との繋がりと、続けるための仕組みだけ。沖縄から届ける、あなただけの呼吸習慣。</div>
+        <div class="copy-box-eval">✓ 「沖縄から届ける」ブランドとして独自性が高い<br>✓ シンプルで記憶に残りやすい<br>△ 「仕組みだけ」という表現が少し冷たく感じる可能性<br>→ Instagram新規獲得フェーズに向いている</div>
+      </div>
+    </div>
+    <div class="insight">
+      <div class="insight-title">💡 使い分け提案</div>
+      <div class="insight-body">
+        <strong style="color:#1E1E1C;">MVP期（既存生徒向け）</strong>→ サブ案①を使う。「先生と歩む」「あなただけのサポート」は信頼関係がある生徒に刺さる。<br>
+        <strong style="color:#1E1E1C;">スケール期（新規獲得）</strong>→ サブ案②に切り替える。「沖縄から届ける」というブランドストーリーがSNS映えする。<br>
+        <strong style="color:#1E1E1C;">メインコピー</strong>「呼吸は、今から変えられる最小のセルフケア。」はどのフェーズでも共通して使える普遍的な一行なので、プロフィール固定文として維持を推奨。
+      </div>
+    </div>
+  </div>
+
+  <!-- Next Steps -->
+  <div class="next">
+    <div class="next-title">→ Next Steps ｜ Phase 5（MVP構築・検証）へ</div>
+    <div class="next-item">
+      <div class="next-num">01</div>
+      <div>
+        <div class="next-text">LINEリマインダー × Googleフォーム記録 × Claudeでの一言生成 の3点セットをまず手動で動かす</div>
+        <div class="next-phase">PHASE 05 MVP / 今週中にスタート</div>
+      </div>
+    </div>
+    <div class="next-item">
+      <div class="next-num">02</div>
+      <div>
+        <div class="next-text">ガイド動画を1本撮影する（まずは3分の「基本の呼吸法」1本だけでOK）</div>
+        <div class="next-phase">PHASE 05 / 今月中</div>
+      </div>
+    </div>
+    <div class="next-item">
+      <div class="next-num">03</div>
+      <div>
+        <div class="next-text">週次KPIトラッキングシートをNotionまたはGoogleスプレッドシートで作成し、毎週月曜に記録する習慣をつける</div>
+        <div class="next-phase">PHASE 05 / 継続運用</div>
+      </div>
+    </div>
+    <div class="next-item">
+      <div class="next-num">04</div>
+      <div>
+        <div class="next-text">既存生徒10〜15人に声をかけ、MVPへの参加を依頼する（「一緒に試してほしい」という正直な伝え方でOK）</div>
+        <div class="next-phase">PHASE 05 / 今週中</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
