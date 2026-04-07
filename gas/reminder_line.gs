@@ -251,3 +251,35 @@ function createDailyTriggerAt630() {
     .nearMinute(30)
     .create();
 }
+
+/**LINE Webhook
+*生徒さんがLINEでメッセージを送る
+*        ↓
+*LINE公式アカウントが受け取る
+*        ↓
+*Webhook（郵便受け）経由でGASに転送
+*        ↓
+*GASが「この人のユーザーIDはXXXだ」と記録する
+*LINEは**「誰が友だちになったか」を自動で教えてくれない**ので、生徒さんが自分からメッセージを送ってきた瞬間を捕まえてユーザーIDを取得する必要がある
+*/
+
+function doPost(e) {
+  try {
+    var json = JSON.parse(e.postData.contents);
+    var userId = json.events[0].source.userId;
+    var cfg = getConfig_();
+    var ss = SpreadsheetApp.openById(cfg.spreadsheetId);
+    var sheet = ss.getSheetByName('ユーザー');
+    
+    // 重複チェック
+    var existing = sheet.getDataRange().getValues();
+    for (var i = 0; i < existing.length; i++) {
+      if (existing[i][0] === userId) return;
+    }
+    
+    // 新規ユーザーとして追加
+    sheet.appendRow([userId]);
+  } catch(e) {
+    console.log('エラー: ' + e.message);
+  }
+}
