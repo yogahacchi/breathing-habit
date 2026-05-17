@@ -68,7 +68,7 @@ html, body {
   justify-content: space-between;
   padding: calc(env(safe-area-inset-top, 14px) + 4px) 24px 0;
   font-family: 'Cormorant Garamond', serif;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--ink3);
   flex-shrink: 0;
 }
