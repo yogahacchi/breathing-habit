@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>メトロノーム使い方ガイド｜Hacchi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:rgba(0,0,0,0);}
+:root{
+  --cream:#FAF8F4;--sand:#F0EBE0;--sand2:#E8E0D4;
+  --teal:#1E6F7A;--teal-d:#155A64;--teal-l:#D6EDEA;
+  --terra:#C4602A;--terra-l:#F5E8E0;
+  --ink:#1E1E1C;--ink2:#4A4A48;--ink3:#8A8A86;
+}
+html,body{width:100%;min-height:100vh;background:#EEEBE4;font-family:'Noto Serif JP',serif;-webkit-font-smoothing:antialiased;}
+.phone{width:100%;max-width:480px;min-height:100vh;margin:0 auto;background:var(--cream);}
+.status{display:flex;justify-content:space-between;padding:calc(env(safe-area-inset-top,14px)+4px) 24px 0;font-family:'Cormorant Garamond',serif;font-size:12px;color:var(--ink3);}
+.art-header{background:var(--teal-d);padding:16px 24px 22px;}
+.art-back{font-size:13px;color:#A8D8DE;margin-bottom:12px;cursor:pointer;display:inline-block;touch-action:manipulation;}
+.art-eyebrow{font-size:10px;color:#A8D8DE;letter-spacing:.1em;margin-bottom:6px;}
+.art-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:#FAF8F4;line-height:1.3;margin-bottom:6px;}
+.art-sub{font-size:11px;color:#6BBDB4;line-height:1.6;}
+.tabs{display:flex;border-bottom:.5px solid var(--sand2);overflow-x:auto;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{flex-shrink:0;padding:12px 18px;font-size:12px;color:var(--ink3);border-bottom:2.5px solid transparent;cursor:pointer;white-space:nowrap;font-family:'Noto Serif JP',serif;border:none;background:transparent;touch-action:manipulation;}
+.tab.active{color:var(--teal);border-bottom:2.5px solid var(--teal);font-weight:500;}
+.section{padding:22px 20px 24px;display:none;}
+.section.show{display:block;}
+.step-list{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+.step-card{background:var(--sand);border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--teal);color:#FAF8F4;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.step-icons{display:flex;gap:6px;flex-shrink:0;margin-top:1px;}
+.step-body{flex:1;min-width:0;}
+.step-title{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:4px;line-height:1.4;}
+.step-desc{font-size:12px;color:var(--ink3);line-height:1.9;word-break:break-word;}
+.step-tag{display:inline-block;font-size:10px;padding:3px 9px;border-radius:99px;margin-top:6px;}
+.bpm-card{background:var(--teal-d);border-radius:14px;padding:18px 20px;margin-bottom:16px;}
+.bpm-word{font-family:'Cormorant Garamond',serif;font-size:30px;color:#FAF8F4;font-weight:300;font-style:italic;margin-bottom:4px;}
+.bpm-read{font-size:10px;color:#A8D8DE;letter-spacing:.08em;margin-bottom:10px;}
+.bpm-desc{font-size:12px;color:#D6EDEA;line-height:1.9;word-break:break-word;}
+.bpm-examples{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+.bpm-ex{background:rgba(255,255,255,.08);border-radius:9px;padding:10px;text-align:center;}
+.bpm-ex-num{font-family:'Cormorant Garamond',serif;font-size:22px;color:#FAF8F4;font-weight:300;}
+.bpm-ex-lbl{font-size:9px;color:#6BBDB4;margin-top:3px;line-height:1.6;}
+.sec-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.sec-head-bar{width:3px;height:17px;background:var(--terra);border-radius:2px;flex-shrink:0;}
+.sec-head-txt{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--ink);font-weight:300;}
+.info-card{background:var(--teal-l);border-radius:12px;padding:13px 16px;margin-bottom:14px;}
+.info-title{font-size:10px;color:var(--teal);font-weight:500;letter-spacing:.06em;margin-bottom:8px;}
+.info-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;}
+.info-row:last-child{margin-bottom:0;}
+.info-dot{width:5px;height:5px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:6px;}
+.info-txt{font-size:12px;color:var(--teal-d);line-height:1.8;word-break:break-word;}
+.color-row{display:flex;gap:8px;margin-bottom:16px;}
+.color-item{flex:1;border-radius:11px;padding:12px 8px;text-align:center;}
+.color-circle{width:34px;height:34px;border-radius:50%;margin:0 auto 7px;}
+.color-name{font-size:11px;font-weight:500;margin-bottom:3px;}
+.color-desc{font-size:9px;line-height:1.6;}
+.round-sub{border-radius:10px;padding:11px 13px;margin-top:10px;}
+.round-sub-title{font-size:11px;font-weight:500;margin-bottom:5px;}
+.round-sub-desc{font-size:11px;color:var(--ink2);line-height:1.9;word-break:break-word;}
+.hacchi-voice{background:var(--sand);border-radius:14px;padding:16px 18px;margin-bottom:8px;}
+.voice-from{font-size:9px;color:var(--teal);font-weight:500;letter-spacing:.08em;margin-bottom:10px;display:flex;align-items:center;gap:5px;}
+.voice-from::before{content:'';width:3px;height:10px;background:var(--terra);border-radius:2px;display:inline-block;flex-shrink:0;}
+.voice-text{font-size:13px;color:var(--ink2);line-height:2.2;white-space:pre-wrap;word-break:break-word;}
+.nav{background:var(--sand);border-top:.5px solid var(--sand2);padding:12px 0 calc(env(safe-area-inset-bottom,0px)+12px);display:flex;justify-content:space-around;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 12px;cursor:pointer;}
+.nav-icon{font-size:22px;opacity:.4;}
+.nav-icon.active{opacity:1;}
+.nav-lbl{font-size:10px;color:var(--ink3);}
+.nav-lbl.active{color:var(--teal);}
+@media(min-width:520px){.phone{margin:0 auto;box-shadow:0 0 40px rgba(0,0,0,.1);}}
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <div class="status"><span id="st">9:41</span><span>◼◼◼</span></div>
+
+  <div class="art-header">
+    <div class="art-back" onclick="history.back()">← 練習へ戻る</div>
+    <div class="art-eyebrow">HOW TO USE</div>
+    <div class="art-title">メトロノーム<br>使い方ガイド</div>
+    <div class="art-sub">呼吸のリズムを整えるための道具</div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" type="button" onclick="show(0,this)">基本の使い方</button>
+    <button class="tab" type="button" onclick="show(1,this)">BPMとは</button>
+    <button class="tab" type="button" onclick="show(2,this)">呼吸ガイド詳細</button>
+  </div>
+
+  <!-- ① 基本の使い方 -->
+  <div class="section show" id="sec0">
+    <div class="sec-head"><div class="sec-head-bar"></div><div class="sec-head-txt">2つのモード</div></div>
+    <div class="step-list">
+      <div class="step-card">
+        <div class="step-num">振</div>
+        <div class="step-body">
+          <div class="step-title">振り子モード</div>
+          <div class="step-desc">一定のテンポを音と動きで刻みます。BPMスライダーでテンポを調整して、そのリズムに自分の呼吸を合わせていく使い方。</div>
+          <span class="step-tag" style="background:var(--teal-l);color:var(--teal-d);">シンプル・自由</span>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num" style="background:var(--terra);">呼</div>
+        <div class="step-body">
+          <div class="step-title">呼吸ガイドモード</div>
+          <div class="step-desc">「吸う拍数」と「吐く拍数」を設定すると、丸が膨らむ・縮むアニメーションと音でガイドします。吸う・吐くのタイミングを視覚的に楽しみたい方に。</div>
+          <span class="step-tag" style="background:var(--terra-l);color:var(--terra);">丁寧にガイド</span>
+        </div>
+      </div>
+    </div>
+    <div class="sec-head"><div class="sec-head-bar"></div><div class="sec-head-txt">基本の操作</div></div>
+    <div class="step-list">
+      <div class="step-card"><div class="step-num">1</div><div class="step-body"><div class="step-title">モードを選ぶ</div><div class="step-desc">画面上部のタブで「振り子」か「呼吸ガイド」を選びます。</div></div></div>
+      <div class="step-card"><div class="step-num">2</div><div class="step-body"><div class="step-title">テンポ（BPM）を設定する</div><div class="step-desc">スライダーを動かしてテンポを調整します。当プログラムでは、60BPMで実践します。</div></div></div>
+      <div class="step-card"><div class="step-num">3</div><div class="step-body"><div class="step-title">サウンドを選ぶ</div><div class="step-desc">「ウッド（木製ブロック音）」か「ディープ（低音デジタル）」の2種類。耳に優しい音を選んでください。</div></div></div>
+      <div class="step-card"><div class="step-num">4</div><div class="step-body"><div class="step-title">スタートを押す</div><div class="step-desc">練習中は画面が自動でオンに保たれます（画面ロックを防ぎます）。ストップを押すまで続きます。</div></div></div>
+    </div>
+    <div class="hacchi-voice">
+      <div class="voice-from">はっちより</div>
+      <div class="voice-text">最初は音だけ聞いて
+体の力を抜くことからスタートしてみてね。
+
+驚くべきことに
+日によって
+「1秒」の感覚は異なるので
+
+メトロノームで
+リズムを合わせながら
+練習するのがお勧めです🌿</div>
+    </div>
+  </div>
+
+  <!-- ② BPMとは -->
+  <div class="section" id="sec1">
+    <div class="bpm-card">
+      <div class="bpm-word">BPM</div>
+      <div class="bpm-read">Beats Per Minute　ビーツ・パー・ミニット</div>
+      <div class="bpm-desc">「1分間に何回テンポを刻むか」を表す数字です。数字が小さいほどゆっくり、大きいほど速くなります。</div>
+      <div class="bpm-examples">
+        <div class="bpm-ex"><div class="bpm-ex-num">60</div><div class="bpm-ex-lbl">時計の秒針と<br>同じテンポ</div></div>
+        <div class="bpm-ex"><div class="bpm-ex-num">120</div><div class="bpm-ex-lbl">ウォーキングに最適な<br>やや早歩きのテンポ</div></div>
+      </div>
+    </div>
+    <div class="sec-head"><div class="sec-head-bar"></div><div class="sec-head-txt">呼吸数の目安</div></div>
+    <div class="info-card">
+      <div class="info-title">安静時・リラックス呼吸</div>
+      <div class="info-row"><div class="info-dot"></div><div class="info-txt">成人は、1分間に12〜20回程度</div></div>
+    </div>
+    <div class="info-card" style="background:var(--terra-l);">
+      <div class="info-title" style="color:var(--terra);">深い呼吸</div>
+      <div class="info-row"><div class="info-dot" style="background:var(--terra);"></div><div class="info-txt" style="color:var(--ink2);">1分間に4〜6回の呼吸（深く長い呼吸）</div></div>
+    </div>
+    <div class="sec-head"><div class="sec-head-bar"></div><div class="sec-head-txt">振り子モードでの使い方</div></div>
+    <div class="step-list">
+      <div class="step-card">
+        <div class="step-num" style="background:var(--sand2);color:var(--ink2);">例</div>
+        <div class="step-body">
+          <div class="step-title">BPM60で吸う吐く5拍ずつ呼吸する場合</div>
+          <div class="step-desc">振り子モードでは「1拍＝1秒のリズム」として使い、そのリズムに合わせて吸う・吐くを繰り返します。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ 呼吸ガイド詳細 -->
+  <div class="section" id="sec2">
+    <div class="sec-head"><div class="sec-head-bar"></div><div class="sec-head-txt">拍数の設定</div></div>
+    <div class="step-list">
+      <div class="step-card">
+        <div class="step-icons">
+          <div class="step-num" style="background:var(--terra);">吸</div>
+          <div class="step-num" style="background:var(--teal);">吐</div>
+        </div>
+        <div class="step-body">
+          <div class="step-title">吸う拍数・吐く拍数</div>
+          <div class="step-desc">−/+ボタンで1〜30拍の間で設定できます。「吸う4拍・吐く6拍」のように吐くを長めにすると副交感神経が優位になりやすいです。</div>
+        </div>
+      </div>
+    </div>
+    <div class="sec-head"><div class="sec-head-bar"></div><div class="sec-head-txt">丸のアニメーションと色の意味</div></div>
+    <div class="color-row">
+      <div class="color-item" style="background:var(--terra-l);">
+        <div class="color-circle" style="background:var(--terra);"></div>
+        <div class="color-name" style="color:var(--terra);">テラコッタ</div>
+        <div class="color-desc" style="color:var(--ink3);">吸うとき<br>丸が膨らむ<br>ラジャス（活性）</div>
+      </div>
+      <div class="color-item" style="background:var(--teal-l);">
+        <div class="color-circle" style="background:var(--teal);"></div>
+        <div class="color-name" style="color:var(--teal-d);">ティール</div>
+        <div class="color-desc" style="color:var(--ink3);">吐くとき<br>丸が縮む<br>タマス（静）</div>
+      </div>
+    </div>
+    <div class="sec-head"><div class="sec-head-bar"></div><div class="sec-head-txt">練習モードの選び方</div></div>
+    <div class="step-list">
+      <div class="step-card">
+        <div class="step-num" style="background:var(--teal);">時</div>
+        <div class="step-body">
+          <div class="step-title">時間モード（1・3・5・10分）</div>
+          <div class="step-desc">設定した時間が来たら自動で終了します。「今日は3分だけ」という使い方に。</div>
+        </div>
+      </div>
+      <div class="step-card" style="flex-direction:column;gap:0;">
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div class="step-num" style="background:var(--terra);">回</div>
+          <div class="step-body">
+            <div class="step-title">ラウンドモード（5・10・15・20回）</div>
+          </div>
+        </div>
+        <div class="round-sub" style="background:var(--teal-l);">
+          <div class="round-sub-title" style="color:var(--teal-d);">両鼻腔での呼吸</div>
+          <div class="round-sub-desc">吸う→吐く を1ラウンドとして、設定した回数で自動終了。「今日は10ラウンド」という使い方に。</div>
+        </div>
+        <div class="round-sub" style="background:var(--terra-l);margin-top:8px;">
+          <div class="round-sub-title" style="color:var(--terra);">片鼻呼吸法</div>
+          <div class="round-sub-desc">吸う→吐く→吸う→吐く を1ラウンドとして、設定した回数で自動終了。「今日は10ラウンド」という使い方に。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav">
+    <div class="nav-item" onclick="window.location.href='home.html'"><div class="nav-icon">🏠</div><div class="nav-lbl">ホーム</div></div>
+    <div class="nav-item" onclick="window.location.href='metronome.html'"><div class="nav-icon active">🫁</div><div class="nav-lbl active">練習</div></div>
+    <div class="nav-item" onclick="window.location.href='dashboard.html'"><div class="nav-icon">📈</div><div class="nav-lbl">記録</div></div>
+    <div class="nav-item" onclick="window.location.href='settings.html'"><div class="nav-icon">⚙️</div><div class="nav-lbl">設定</div></div>
+  </div>
+</div>
+
+<script>
+function show(idx, btn) {
+  document.querySelectorAll('.section').forEach(function(s,i){s.classList.toggle('show',i===idx);});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  btn.classList.add('active');
+  btn.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function tick(){
+  var t=new Date();
+  document.getElementById('st').textContent=
+    String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
+}
+tick(); setInterval(tick,10000);
+</script>
+</body>
+</html>

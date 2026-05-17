@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#1E6F7A">
+<title>Hacchi｜呼吸メトロノーム</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="assets/common.css">
+<style>
+.visual-area{height:220px;display:flex;align-items:center;justify-content:center;position:relative;background:var(--vis);margin:0 20px;border-radius:20px;overflow:hidden;flex-shrink:0;}
+.orb-scene{position:relative;width:190px;height:200px;display:flex;align-items:center;justify-content:center;}
+.a-orb{width:76px;height:76px;border-radius:50%;background:var(--teal);position:relative;z-index:2;box-shadow:0 4px 20px rgba(30,111,122,.32);}
+.dg-layer{position:absolute;bottom:4px;left:0;width:190px;height:56px;pointer-events:none;}
+.beat-section{padding:8px 20px 0;text-align:center;}
+.bdots{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;min-height:20px;}
+.bdot{width:10px;height:10px;border-radius:50%;background:var(--sand2);}
+.bdot.in{background:var(--terra);}
+.bdot.out{background:var(--teal);}
+.phase-lbl{font-size:11px;color:var(--ink3);letter-spacing:.1em;margin-top:5px;min-height:16px;}
+.phase-lbl.in{color:var(--terra);}
+.phase-lbl.out{color:var(--teal);}
+.progress-lbl{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--ink3);margin-top:3px;min-height:20px;}
+.count-row{display:flex;gap:8px;padding:10px 20px 0;}
+.count-block{flex:1;background:var(--sand);border-radius:12px;padding:10px 8px;text-align:center;}
+.count-lbl{font-size:11px;color:var(--ink3);margin-bottom:7px;}
+.count-ctrl{display:flex;align-items:center;justify-content:center;gap:8px;}
+.cnt-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--sand2);background:var(--cream);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--ink2);-webkit-appearance:none;touch-action:manipulation;}
+.cnt-btn:active{background:var(--teal-l);border-color:var(--teal);}
+.cnt-val{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--ink);min-width:32px;text-align:center;}
+.cnt-sub{font-size:10px;color:var(--ink3);margin-top:3px;}
+.bpm-row{display:flex;align-items:center;gap:10px;padding:10px 20px 0;}
+.bpm-rlbl{font-size:12px;color:var(--ink3);flex-shrink:0;}
+.bpm-rnum{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--ink);min-width:38px;text-align:right;flex-shrink:0;}
+.bpm-rslider{flex:1;-webkit-appearance:none;height:4px;border-radius:2px;outline:none;cursor:pointer;background:linear-gradient(to right,var(--teal) 50%,var(--sand2) 50%);}
+.bpm-rslider::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;background:var(--teal);border-radius:50%;box-shadow:0 2px 6px rgba(30,111,122,.35);}
+.prac-section{padding:10px 20px 0;}
+.prac-opts{display:flex;gap:6px;}
+.prac-opt{flex:1;border:1.5px solid var(--sand2);background:var(--cream);border-radius:8px;padding:10px 2px;font-size:12px;font-family:'Noto Serif JP',serif;color:var(--ink2);cursor:pointer;text-align:center;-webkit-appearance:none;touch-action:manipulation;}
+.prac-opt.active{border-color:var(--teal);background:var(--teal-l);color:var(--teal-d);font-weight:500;}
+.sec-label{padding:10px 24px 7px;font-size:11px;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;}
+.sound-row{display:flex;gap:8px;padding:0 20px;}
+.snd{flex:1;border:1.5px solid var(--sand2);background:var(--cream);border-radius:9px;padding:10px 2px;font-size:12px;font-family:'Noto Serif JP',serif;color:var(--ink2);cursor:pointer;text-align:center;-webkit-appearance:none;touch-action:manipulation;}
+.snd.active{border-color:var(--teal);background:var(--teal-l);color:var(--teal-d);font-weight:500;}
+.snd-sub{font-size:10px;color:var(--ink3);display:block;margin-top:3px;}
+.bpm-full-area{text-align:center;padding:14px 24px 0;}
+.bpm-fn{font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:300;color:var(--ink);line-height:1;}
+.bpm-fu{font-size:12px;color:var(--ink3);letter-spacing:.08em;display:block;margin-top:3px;}
+.slider-wrap{padding:10px 24px 0;}
+input.full-slider{width:100%;-webkit-appearance:none;height:4px;border-radius:2px;outline:none;cursor:pointer;background:linear-gradient(to right,var(--teal) 50%,var(--sand2) 50%);}
+input.full-slider::-webkit-slider-thumb{-webkit-appearance:none;width:32px;height:32px;background:var(--teal);border-radius:50%;box-shadow:0 2px 8px rgba(30,111,122,.35);}
+.bpm-labels{display:flex;justify-content:space-between;padding:5px 24px 0;font-size:11px;color:var(--ink3);}
+.play-wrap{padding:14px 20px 0;}
+/* Wake Lock インジケーター */
+.wakelock-badge{display:none;margin:8px 20px 0;background:var(--teal-l);border-radius:8px;padding:6px 12px;font-size:10px;color:var(--teal-d);text-align:center;}
+.wakelock-badge.show{display:block;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="status-bar"><span id="st">9:41</span><span>◼◼◼</span></div>
+  <div class="page-header">
+    <a class="back-btn" href="home.html">← ホーム</a>
+    <div class="page-title">呼吸メトロノーム</div>
+    <a href="hacchi_metronome_guide.html" style="height:28px;display:flex;align-items:center;justify-content:center;padding:0 10px;border-radius:14px;background:var(--teal-l);color:var(--teal-d);font-size:10px;font-family:'Noto Serif JP',serif;text-decoration:none;flex-shrink:0;white-space:nowrap;line-height:1.3;text-align:center;">使い方・<br>各モードの説明</a>
+  </div>
+
+  <div class="toggle-row" style="margin:0 20px 12px;">
+    <button class="toggle-btn active" id="btn-pendulum" type="button">振り子</button>
+    <button class="toggle-btn" id="btn-orb" type="button">呼吸ガイド</button>
+  </div>
+
+  <div class="visual-area">
+    <div id="pend-view">
+      <svg width="200" height="210" viewBox="0 0 200 210">
+        <defs><filter id="ws"><feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#1E6F7A" flood-opacity=".28"/></filter></defs>
+        <path d="M 28 198 A 148 148 0 0 1 172 198" fill="none" stroke="#C4BEB6" stroke-width="1.5" stroke-dasharray="3 5"/>
+        <line x1="100" y1="182" x2="100" y2="194" stroke="#B0A8A0" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="58" y1="190" x2="63" y2="178" stroke="#BCB4AC" stroke-width="1" stroke-linecap="round"/>
+        <line x1="142" y1="190" x2="137" y2="178" stroke="#BCB4AC" stroke-width="1" stroke-linecap="round"/>
+        <rect x="84" y="14" width="32" height="10" rx="5" fill="#BFB8AE"/>
+        <rect x="94" y="12" width="12" height="5" rx="2.5" fill="#AFA8A0"/>
+        <circle cx="100" cy="22" r="5" fill="#1E6F7A"/>
+        <g id="pend-group" style="transform-origin:100px 22px;transform:rotate(-32deg);transition:transform .5s cubic-bezier(.37,0,.63,1);">
+          <line x1="100" y1="22" x2="100" y2="174" stroke="#2A7070" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="100" cy="182" r="18" fill="#1E6F7A" filter="url(#ws)"/>
+          <circle cx="100" cy="182" r="11" fill="#155A64" opacity=".55"/>
+          <circle cx="95" cy="177" r="4" fill="#FAF8F4" opacity=".22"/>
+        </g>
+      </svg>
+    </div>
+    <div id="orb-view" style="display:none;align-items:center;justify-content:center;">
+      <div class="orb-scene">
+        <div class="a-orb" id="a-orb"></div>
+        <svg class="dg-layer" viewBox="0 0 190 56">
+          <path d="M 20,10 Q 28,30 28,44" fill="none" stroke="#B8B0A8" stroke-width="1" stroke-dasharray="2 3"/>
+          <path d="M 170,10 Q 162,30 162,44" fill="none" stroke="#B8B0A8" stroke-width="1" stroke-dasharray="2 3"/>
+          <g id="a-dg" style="transition:transform .5s ease-in-out;">
+            <path d="M 18,22 Q 95,9 172,22" fill="#C8DC90" fill-opacity=".5" stroke="#3B6D11" stroke-width="2.5" stroke-linecap="round"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div id="beat-section" style="display:none;">
+    <div class="beat-section">
+      <div class="bdots" id="bdots"></div>
+      <div class="phase-lbl" id="phase-lbl"></div>
+      <div class="progress-lbl" id="progress-lbl"></div>
+    </div>
+  </div>
+
+  <!-- Wake Lock バッジ -->
+  <div class="wakelock-badge" id="wakelock-badge">📱 練習中は画面をオンに保ちます</div>
+
+  <!-- 振り子コントロール -->
+  <div id="pend-ctrls">
+    <div class="bpm-full-area">
+      <span class="bpm-fn" id="bpm-p-num">60</span>
+      <span class="bpm-fu">BPM</span>
+    </div>
+    <div class="slider-wrap">
+      <input class="full-slider" type="range" min="0" max="120" value="60" id="bpm-p-slider">
+    </div>
+    <div class="bpm-labels"><span>0</span><span>30</span><span>60</span><span>90</span><span>120</span></div>
+    <div class="sec-label">サウンド</div>
+    <div class="sound-row" id="pend-sound-row">
+      <button class="snd" data-sound="wood" type="button">ウッド<span class="snd-sub">木製ブロック</span></button>
+      <button class="snd active" data-sound="deep" type="button">ディープ<span class="snd-sub">低音デジタル</span></button>
+    </div>
+  </div>
+
+  <!-- 呼吸ガイドコントロール -->
+  <div id="orb-ctrls" style="display:none;">
+    <div class="count-row">
+      <div class="count-block">
+        <div class="count-lbl">吸う 拍数</div>
+        <div class="count-ctrl">
+          <button class="cnt-btn" id="in-minus" type="button">−</button>
+          <span class="cnt-val" id="in-val">5</span>
+          <button class="cnt-btn" id="in-plus" type="button">+</button>
+        </div>
+        <div class="cnt-sub">拍</div>
+      </div>
+      <div class="count-block">
+        <div class="count-lbl">吐く 拍数</div>
+        <div class="count-ctrl">
+          <button class="cnt-btn" id="out-minus" type="button">−</button>
+          <span class="cnt-val" id="out-val">5</span>
+          <button class="cnt-btn" id="out-plus" type="button">+</button>
+        </div>
+        <div class="cnt-sub">拍</div>
+      </div>
+    </div>
+    <div class="bpm-row">
+      <span class="bpm-rlbl">BPM</span>
+      <span class="bpm-rnum" id="bpm-o-num">60</span>
+      <input class="bpm-rslider" type="range" min="1" max="120" value="60" id="bpm-o-slider">
+    </div>
+    <div class="prac-section">
+      <div class="toggle-row" style="margin-bottom:8px;">
+        <button class="toggle-btn active" id="prac-time-btn" type="button">時間</button>
+        <button class="toggle-btn" id="prac-round-btn" type="button">ラウンド</button>
+      </div>
+      <div id="time-opts" class="prac-opts">
+        <button class="prac-opt active" data-val="1" type="button">1分</button>
+        <button class="prac-opt" data-val="3" type="button">3分</button>
+        <button class="prac-opt" data-val="5" type="button">5分</button>
+        <button class="prac-opt" data-val="10" type="button">10分</button>
+      </div>
+      <div id="round-opts" class="prac-opts" style="display:none;">
+        <button class="prac-opt active" data-val="5" type="button">5回</button>
+        <button class="prac-opt" data-val="10" type="button">10回</button>
+        <button class="prac-opt" data-val="15" type="button">15回</button>
+        <button class="prac-opt" data-val="20" type="button">20回</button>
+      </div>
+      <!-- 呼吸タイプ（ラウンド選択時のみ表示） -->
+      <div id="breath-type-wrap" style="display:none;margin-top:10px;">
+        <div style="font-size:11px;color:var(--ink3);letter-spacing:.08em;margin-bottom:6px;">呼吸タイプ</div>
+        <div class="prac-opts">
+          <button class="prac-opt active" id="type-normal" type="button">
+            両鼻腔での呼吸
+            <span style="font-size:9px;display:block;margin-top:2px;opacity:.8;">吸→吐 = 1R</span>
+          </button>
+          <button class="prac-opt" id="type-nadi" type="button">
+            片鼻呼吸法
+            <span style="font-size:9px;display:block;margin-top:2px;opacity:.8;">吸→吐→吸→吐 = 1R</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="sec-label">サウンド</div>
+    <div class="sound-row" id="orb-sound-row">
+      <button class="snd" data-sound="wood" type="button">ウッド<span class="snd-sub">木製ブロック</span></button>
+      <button class="snd active" data-sound="deep" type="button">ディープ<span class="snd-sub">低音デジタル</span></button>
+    </div>
+  </div>
+
+  <div class="play-wrap">
+    <button class="btn-primary" id="play-btn" type="button">
+      <span id="play-icon">▶</span>&nbsp;<span id="play-txt">スタート</span>
+    </button>
+  </div>
+
+  <nav class="bottom-nav">
+    <a class="nav-item" data-nav="home"><div class="nav-icon">🏠</div><div class="nav-lbl">ホーム</div></a>
+    <a class="nav-item" data-nav="practice"><div class="nav-icon active">🫁</div><div class="nav-lbl active">練習</div></a>
+    <a class="nav-item" data-nav="record"><div class="nav-icon">📈</div><div class="nav-lbl">記録</div></a>
+    <a class="nav-item" data-nav="settings"><div class="nav-icon">⚙️</div><div class="nav-lbl">設定</div></a>
+  </nav>
+</div>
+
+<script src="assets/common.js"></script>
+<script>
+'use strict';
+startClock('st');
+
+// ── 状態 ──
+var bpmP=60,bpmO=60,mode='pendulum',sound='deep',playing=false;
+var countsIn=5,countsOut=5,pracMode='time',pracVal=1;
+var currentPhase='in',beatInPhase=0,currentRound=0,cycleCount=0;
+var breathingType='normal'; // 'normal' | 'nadi'
+var beatTimer=null,pendRight=false,startTime=null;
+
+// ── Wake Lock ──
+var wakeLock=null;
+async function requestWakeLock(){
+  if(!('wakeLock' in navigator))return;
+  try{
+    wakeLock=await navigator.wakeLock.request('screen');
+    document.getElementById('wakelock-badge').classList.add('show');
+    wakeLock.addEventListener('release',function(){
+      document.getElementById('wakelock-badge').classList.remove('show');
+    });
+  }catch(e){}
+}
+function releaseWakeLock(){
+  if(wakeLock){wakeLock.release();wakeLock=null;}
+  document.getElementById('wakelock-badge').classList.remove('show');
+}
+// 画面復帰時に再取得
+document.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='visible'&&playing)requestWakeLock();
+});
+
+// ── AudioContext ──
+var AC=window.AudioContext||window.webkitAudioContext;
+var ctx=null;
+function initAudio(){
+  if(!ctx)ctx=new AC();
+  if(ctx.state==='suspended')ctx.resume();
+  return ctx;
+}
+function playSound(){
+  if(!ctx||ctx.state==='suspended')return;
+  try{
+    var t=ctx.currentTime;
+    if(sound==='wood'){
+      var len=Math.ceil(ctx.sampleRate*.08);
+      var buf=ctx.createBuffer(1,len,ctx.sampleRate);
+      var d=buf.getChannelData(0);
+      for(var i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,12)*.9;
+      var s=ctx.createBufferSource();s.buffer=buf;
+      var f=ctx.createBiquadFilter();f.type='bandpass';f.frequency.value=1100;f.Q.value=4;
+      var g=ctx.createGain();g.gain.value=1.2;
+      s.connect(f);f.connect(g);g.connect(ctx.destination);s.start(t);
+    }else if(sound==='deep'){
+      var o1=ctx.createOscillator(),o2=ctx.createOscillator();
+      var g=ctx.createGain(),g2=ctx.createGain();
+      o1.type='sine';o1.frequency.value=180;
+      o2.type='sine';o2.frequency.value=360;g2.gain.value=.25;
+      o1.connect(g);o2.connect(g2);g2.connect(g);g.connect(ctx.destination);
+      g.gain.setValueAtTime(0,t);
+      g.gain.linearRampToValueAtTime(.2,t+.012);
+      g.gain.exponentialRampToValueAtTime(.001,t+.65);
+      o1.start(t);o1.stop(t+1);o2.start(t);o2.stop(t+1);
+    }else{
+      var o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.type='sine';o.frequency.value=1320;
+      g.gain.setValueAtTime(.16,t);
+      g.gain.exponentialRampToValueAtTime(.001,t+.65);
+      o.start(t);o.stop(t+1);
+    }
+  }catch(e){}
+}
+
+// ── 振り子 ──
+function swingPendulum(){
+  pendRight=!pendRight;
+  document.getElementById('pend-group').style.transform='rotate('+(pendRight?32:-32)+'deg)';
+  playSound();
+}
+
+// ── Orb ──
+function resetOrbInstant(){
+  var orb=document.getElementById('a-orb'),dg=document.getElementById('a-dg');
+  orb.style.transition='none';dg.style.transition='none';
+  orb.style.transform='scale(0.6)';orb.style.backgroundColor='#1E6F7A';
+  orb.style.boxShadow='0 4px 20px rgba(30,111,122,.32)';
+  dg.style.transform='translateY(0)';
+  void orb.offsetWidth;
+}
+function startPhase(phase){
+  var counts=(phase==='in')?countsIn:countsOut;
+  var dur=(counts*60000/bpmO/1000).toFixed(2)+'s';
+  var orb=document.getElementById('a-orb'),dg=document.getElementById('a-dg');
+  orb.style.transition='transform '+dur+' ease-in-out,background-color '+dur+' ease-in-out,box-shadow '+dur+' ease-in-out';
+  dg.style.transition='transform '+dur+' ease-in-out';
+  if(phase==='in'){
+    orb.style.transform='scale(1.42)';orb.style.backgroundColor='#C4602A';
+    orb.style.boxShadow='0 6px 28px rgba(196,96,42,.4)';dg.style.transform='translateY(12px)';
+  }else{
+    orb.style.transform='scale(0.6)';orb.style.backgroundColor='#1E6F7A';
+    orb.style.boxShadow='0 4px 20px rgba(30,111,122,.32)';dg.style.transform='translateY(-6px)';
+  }
+  var lbl=document.getElementById('phase-lbl');
+  lbl.textContent=(phase==='in')?'吸　う':'吐　く';
+  lbl.className='phase-lbl '+phase;
+  renderDots(phase,0);
+}
+function renderDots(phase,filled){
+  var counts=(phase==='in')?countsIn:countsOut,c=document.getElementById('bdots');
+  c.innerHTML='';
+  for(var i=0;i<counts;i++){
+    var d=document.createElement('div');
+    d.className='bdot'+(i<filled?' '+phase:'');c.appendChild(d);
+  }
+}
+function updateProgress(){
+  var lbl=document.getElementById('progress-lbl');
+  if(pracMode==='rounds'){
+    lbl.textContent='Round '+(currentRound+1)+' / '+pracVal;
+  }else{
+    var rem=Math.max(0,pracVal*60-(Date.now()-startTime)/1000);
+    var m=Math.floor(rem/60),s=Math.floor(rem%60);
+    lbl.textContent='残り '+m+':'+(s<10?'0':'')+s;
+    if(rem<=0)completePractice();
+  }
+}
+function onBeat(){
+  beatInPhase++;playSound();
+  var counts=(currentPhase==='in')?countsIn:countsOut;
+  renderDots(currentPhase,beatInPhase);
+  updateProgress();
+  if(beatInPhase>=counts){
+    beatInPhase=0;
+    if(currentPhase==='in'){
+      currentPhase='out';
+    } else {
+      currentPhase='in';
+      if(pracMode==='rounds'){
+        if(breathingType==='nadi'){
+          cycleCount++;
+          if(cycleCount>=2){ cycleCount=0; currentRound++; }
+        } else {
+          currentRound++;
+        }
+        if(currentRound>=pracVal){completePractice();return;}
+      }
+    }
+    startPhase(currentPhase);
+  }
+}
+function startPractice(){
+  stopTimer();resetOrbInstant();
+  currentPhase='in';beatInPhase=0;currentRound=0;cycleCount=0;startTime=Date.now();
+  document.getElementById('beat-section').style.display='block';
+  document.getElementById('progress-lbl').textContent='';
+  document.getElementById('phase-lbl').textContent='';
+  setTimeout(function(){startPhase('in');beatTimer=setInterval(onBeat,60000/bpmO);},100);
+}
+function stopTimer(){if(beatTimer){clearInterval(beatTimer);beatTimer=null;}}
+function completePractice(){
+  stopTimer();playing=false;releaseWakeLock();
+  var btn=document.getElementById('play-btn');btn.classList.remove('stop');
+  document.getElementById('play-icon').textContent='▶';
+  document.getElementById('play-txt').textContent='スタート';
+  document.getElementById('phase-lbl').textContent='完了';
+  document.getElementById('phase-lbl').className='phase-lbl out';
+  document.getElementById('progress-lbl').textContent='お疲れ様でした🌿';
+  var orb=document.getElementById('a-orb');
+  orb.style.transition='transform .8s ease-out,background-color .8s ease-out';
+  orb.style.transform='scale(1)';orb.style.backgroundColor='#1E6F7A';
+}
+
+// ── プレイボタン ──
+var playBtn=document.getElementById('play-btn');
+function handlePlayStart(){
+  initAudio();
+  playing=!playing;
+  var btn=document.getElementById('play-btn');
+  if(mode==='pendulum'){
+    if(playing){
+      btn.classList.add('stop');
+      document.getElementById('play-icon').textContent='⏹';
+      document.getElementById('play-txt').textContent='ストップ';
+      requestWakeLock();
+      var dur=Math.min((60000/bpmP)*.82/1000,1.1).toFixed(2)+'s';
+      document.getElementById('pend-group').style.transitionDuration=dur;
+      pendRight=false;swingPendulum();
+      beatTimer=setInterval(swingPendulum,60000/bpmP);
+    }else{
+      btn.classList.remove('stop');
+      document.getElementById('play-icon').textContent='▶';
+      document.getElementById('play-txt').textContent='スタート';
+      stopTimer();releaseWakeLock();
+      document.getElementById('pend-group').style.transform='rotate(0deg)';
+    }
+  }else{
+    if(playing){
+      btn.classList.add('stop');
+      document.getElementById('play-icon').textContent='⏹';
+      document.getElementById('play-txt').textContent='ストップ';
+      requestWakeLock();
+      startPractice();
+    }else{
+      btn.classList.remove('stop');
+      document.getElementById('play-icon').textContent='▶';
+      document.getElementById('play-txt').textContent='スタート';
+      stopTimer();releaseWakeLock();
+    }
+  }
+}
+playBtn.addEventListener('touchstart',function(e){e.preventDefault();handlePlayStart();},{passive:false});
+playBtn.addEventListener('click',function(){if(!('ontouchstart' in window))handlePlayStart();});
+
+// ── モード切替 ──
+function setMode(m){
+  mode=m;
+  if(playing){playing=false;stopTimer();releaseWakeLock();
+    var btn=document.getElementById('play-btn');btn.classList.remove('stop');
+    document.getElementById('play-icon').textContent='▶';document.getElementById('play-txt').textContent='スタート';
+  }
+  document.getElementById('btn-pendulum').classList.toggle('active',m==='pendulum');
+  document.getElementById('btn-orb').classList.toggle('active',m==='orb');
+  document.getElementById('pend-view').style.display=m==='pendulum'?'block':'none';
+  var ov=document.getElementById('orb-view');ov.style.display=m==='orb'?'flex':'none';
+  document.getElementById('pend-ctrls').style.display=m==='pendulum'?'block':'none';
+  document.getElementById('orb-ctrls').style.display=m==='orb'?'block':'none';
+  document.getElementById('beat-section').style.display='none';
+  if(m==='pendulum')document.getElementById('pend-group').style.transform='rotate(0deg)';
+}
+document.getElementById('btn-pendulum').addEventListener('click',function(){setMode('pendulum');});
+document.getElementById('btn-orb').addEventListener('click',function(){setMode('orb');});
+
+// ── BPMスライダー ──
+function updateSliderBg(el,val,max){el.style.background='linear-gradient(to right,#1E6F7A 0%,#1E6F7A '+(val/max*100)+'%,#E8E0D4 '+(val/max*100)+'%)';}
+document.getElementById('bpm-p-slider').addEventListener('input',function(){
+  bpmP=parseInt(this.value);document.getElementById('bpm-p-num').textContent=bpmP;
+  updateSliderBg(this,bpmP,120);
+  if(playing&&mode==='pendulum'){stopTimer();beatTimer=setInterval(swingPendulum,60000/bpmP);}
+});
+document.getElementById('bpm-o-slider').addEventListener('input',function(){
+  bpmO=parseInt(this.value);document.getElementById('bpm-o-num').textContent=bpmO;
+  updateSliderBg(this,bpmO,120);
+});
+updateSliderBg(document.getElementById('bpm-p-slider'),60,120);
+updateSliderBg(document.getElementById('bpm-o-slider'),60,120);
+
+// ── カウントボタン ──
+document.getElementById('in-minus').addEventListener('click',function(){if(!playing){countsIn=Math.max(1,countsIn-1);document.getElementById('in-val').textContent=countsIn;}});
+document.getElementById('in-plus').addEventListener('click',function(){if(!playing){countsIn=Math.min(30,countsIn+1);document.getElementById('in-val').textContent=countsIn;}});
+document.getElementById('out-minus').addEventListener('click',function(){if(!playing){countsOut=Math.max(1,countsOut-1);document.getElementById('out-val').textContent=countsOut;}});
+document.getElementById('out-plus').addEventListener('click',function(){if(!playing){countsOut=Math.min(30,countsOut+1);document.getElementById('out-val').textContent=countsOut;}});
+
+// ── サウンドボタン ──
+function setSound(s){sound=s;document.querySelectorAll('.snd').forEach(function(b){b.classList.toggle('active',b.dataset.sound===s);});}
+document.querySelectorAll('.snd').forEach(function(btn){btn.addEventListener('click',function(){setSound(this.dataset.sound);});});
+
+// ── 練習モード ──
+document.getElementById('prac-time-btn').addEventListener('click',function(){
+  pracMode='time';pracVal=1;
+  this.classList.add('active');document.getElementById('prac-round-btn').classList.remove('active');
+  document.getElementById('time-opts').style.display='flex';document.getElementById('round-opts').style.display='none';
+  document.getElementById('breath-type-wrap').style.display='none';
+  document.querySelectorAll('#time-opts .prac-opt').forEach(function(b,i){b.classList.toggle('active',i===0);});
+});
+document.getElementById('prac-round-btn').addEventListener('click',function(){
+  pracMode='rounds';pracVal=5;
+  this.classList.add('active');document.getElementById('prac-time-btn').classList.remove('active');
+  document.getElementById('round-opts').style.display='flex';document.getElementById('time-opts').style.display='none';
+  document.getElementById('breath-type-wrap').style.display='block';
+  document.querySelectorAll('#round-opts .prac-opt').forEach(function(b,i){b.classList.toggle('active',i===0);});
+});
+
+// 呼吸タイプ切替
+document.getElementById('type-normal').addEventListener('click',function(){
+  breathingType='normal';
+  this.classList.add('active');document.getElementById('type-nadi').classList.remove('active');
+});
+document.getElementById('type-nadi').addEventListener('click',function(){
+  breathingType='nadi';
+  this.classList.add('active');document.getElementById('type-normal').classList.remove('active');
+});
+document.querySelectorAll('#time-opts .prac-opt').forEach(function(btn){
+  btn.addEventListener('click',function(){pracVal=parseInt(this.dataset.val);document.querySelectorAll('#time-opts .prac-opt').forEach(function(b){b.classList.remove('active');});this.classList.add('active');});
+});
+document.querySelectorAll('#round-opts .prac-opt').forEach(function(btn){
+  btn.addEventListener('click',function(){pracVal=parseInt(this.dataset.val);document.querySelectorAll('#round-opts .prac-opt').forEach(function(b){b.classList.remove('active');});this.classList.add('active');});
+});
+
+// ライブラリから来た場合はBPM・拍数を自動セット
+(function(){
+  var p=new URLSearchParams(location.search);
+  if(p.get('mode')==='orb'){
+    setMode('orb');
+    if(p.get('bpm'))   {bpmO=parseInt(p.get('bpm'));document.getElementById('bpm-o-num').textContent=bpmO;document.getElementById('bpm-o-slider').value=bpmO;updateSliderBg(document.getElementById('bpm-o-slider'),bpmO,120);}
+    if(p.get('in'))    {countsIn=parseInt(p.get('in'));document.getElementById('in-val').textContent=countsIn;}
+    if(p.get('out'))   {countsOut=parseInt(p.get('out'));document.getElementById('out-val').textContent=countsOut;}
+  }
+})();
+
+initNav('practice');
+</script>
+</body>
+</html>
