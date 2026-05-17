@@ -250,13 +250,19 @@ document.addEventListener('visibilitychange',function(){
 // ── AudioContext ──
 var AC=window.AudioContext||window.webkitAudioContext;
 var ctx=null;
-function initAudio(){
+function unlockAudio(cb){
   if(!ctx)ctx=new AC();
-  if(ctx.state==='suspended')ctx.resume();
-  return ctx;
+  // iOSはユーザー操作と同タイミングで無音バッファを再生しないと音がブロックされる
+  try{
+    var buf=ctx.createBuffer(1,1,ctx.sampleRate);
+    var src=ctx.createBufferSource();
+    src.buffer=buf;src.connect(ctx.destination);src.start(0);
+  }catch(e){}
+  if(ctx.state==='running'){cb();return;}
+  ctx.resume().then(cb).catch(cb);
 }
 function playSound(){
-  if(!ctx||ctx.state==='suspended')return;
+  if(!ctx||ctx.state!=='running')return;
   try{
     var t=ctx.currentTime;
     if(sound==='wood'){
@@ -390,40 +396,38 @@ function completePractice(){
 
 // ── プレイボタン ──
 var playBtn=document.getElementById('play-btn');
-function handlePlayStart(){
-  initAudio();
-  playing=!playing;
+function doStart(){
+  playing=true;
   var btn=document.getElementById('play-btn');
+  btn.classList.add('stop');
+  document.getElementById('play-icon').textContent='⏹';
+  document.getElementById('play-txt').textContent='ストップ';
+  requestWakeLock();
   if(mode==='pendulum'){
-    if(playing){
-      btn.classList.add('stop');
-      document.getElementById('play-icon').textContent='⏹';
-      document.getElementById('play-txt').textContent='ストップ';
-      requestWakeLock();
-      var dur=Math.min((60000/bpmP)*.82/1000,1.1).toFixed(2)+'s';
-      document.getElementById('pend-group').style.transitionDuration=dur;
-      pendRight=false;swingPendulum();
-      beatTimer=setInterval(swingPendulum,60000/bpmP);
-    }else{
-      btn.classList.remove('stop');
-      document.getElementById('play-icon').textContent='▶';
-      document.getElementById('play-txt').textContent='スタート';
-      stopTimer();releaseWakeLock();
-      document.getElementById('pend-group').style.transform='rotate(0deg)';
-    }
+    var dur=Math.min((60000/bpmP)*.82/1000,1.1).toFixed(2)+'s';
+    document.getElementById('pend-group').style.transitionDuration=dur;
+    pendRight=false;swingPendulum();
+    beatTimer=setInterval(swingPendulum,60000/bpmP);
   }else{
-    if(playing){
-      btn.classList.add('stop');
-      document.getElementById('play-icon').textContent='⏹';
-      document.getElementById('play-txt').textContent='ストップ';
-      requestWakeLock();
-      startPractice();
-    }else{
-      btn.classList.remove('stop');
-      document.getElementById('play-icon').textContent='▶';
-      document.getElementById('play-txt').textContent='スタート';
-      stopTimer();releaseWakeLock();
-    }
+    startPractice();
+  }
+}
+function doStop(){
+  playing=false;
+  var btn=document.getElementById('play-btn');
+  btn.classList.remove('stop');
+  document.getElementById('play-icon').textContent='▶';
+  document.getElementById('play-txt').textContent='スタート';
+  stopTimer();releaseWakeLock();
+  if(mode==='pendulum'){
+    document.getElementById('pend-group').style.transform='rotate(0deg)';
+  }
+}
+function handlePlayStart(){
+  if(!playing){
+    unlockAudio(doStart);  // 音声解除完了後に再生開始
+  }else{
+    doStop();
   }
 }
 playBtn.addEventListener('touchstart',function(e){e.preventDefault();handlePlayStart();},{passive:false});
