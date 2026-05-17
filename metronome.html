@@ -132,6 +132,15 @@ input.full-slider::-webkit-slider-thumb{-webkit-appearance:none;width:32px;heigh
       <button class="snd" data-sound="wood" type="button">ウッド<span class="snd-sub">木製ブロック</span></button>
       <button class="snd active" data-sound="deep" type="button">ディープ<span class="snd-sub">低音デジタル</span></button>
     </div>
+    <div class="sec-label">練習時間</div>
+    <div class="prac-opts" id="pend-time-opts" style="padding:0 20px;">
+      <button class="prac-opt active" data-val="0" type="button">なし</button>
+      <button class="prac-opt" data-val="1" type="button">1分</button>
+      <button class="prac-opt" data-val="3" type="button">3分</button>
+      <button class="prac-opt" data-val="5" type="button">5分</button>
+      <button class="prac-opt" data-val="10" type="button">10分</button>
+    </div>
+    <div id="pend-timer-lbl" style="text-align:center;font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--ink3);padding:6px 0 0;min-height:20px;"></div>
   </div>
 
   <!-- 呼吸ガイドコントロール -->
@@ -162,24 +171,13 @@ input.full-slider::-webkit-slider-thumb{-webkit-appearance:none;width:32px;heigh
       <input class="bpm-rslider" type="range" min="1" max="120" value="60" id="bpm-o-slider">
     </div>
     <div class="prac-section">
-      <div class="toggle-row" style="margin-bottom:8px;">
-        <button class="toggle-btn active" id="prac-time-btn" type="button">時間</button>
-        <button class="toggle-btn" id="prac-round-btn" type="button">ラウンド</button>
-      </div>
-      <div id="time-opts" class="prac-opts">
-        <button class="prac-opt active" data-val="1" type="button">1分</button>
-        <button class="prac-opt" data-val="3" type="button">3分</button>
-        <button class="prac-opt" data-val="5" type="button">5分</button>
-        <button class="prac-opt" data-val="10" type="button">10分</button>
-      </div>
-      <div id="round-opts" class="prac-opts" style="display:none;">
+      <div id="round-opts" class="prac-opts">
         <button class="prac-opt active" data-val="5" type="button">5回</button>
         <button class="prac-opt" data-val="10" type="button">10回</button>
         <button class="prac-opt" data-val="15" type="button">15回</button>
         <button class="prac-opt" data-val="20" type="button">20回</button>
       </div>
-      <!-- 呼吸タイプ（ラウンド選択時のみ表示） -->
-      <div id="breath-type-wrap" style="display:none;margin-top:10px;">
+      <div id="breath-type-wrap" style="margin-top:10px;">
         <div style="font-size:11px;color:var(--ink3);letter-spacing:.08em;margin-bottom:6px;">呼吸タイプ</div>
         <div class="prac-opts">
           <button class="prac-opt active" id="type-normal" type="button">
@@ -220,10 +218,11 @@ input.full-slider::-webkit-slider-thumb{-webkit-appearance:none;width:32px;heigh
 
 // ── 状態 ──
 var bpmP=60,bpmO=60,mode='pendulum',sound='deep',playing=false;
-var countsIn=5,countsOut=5,pracMode='time',pracVal=1;
+var countsIn=5,countsOut=5,pracVal=5;
 var currentPhase='in',beatInPhase=0,currentRound=0,cycleCount=0;
 var breathingType='normal'; // 'normal' | 'nadi'
 var beatTimer=null,pendRight=false,startTime=null;
+var pendTimeVal=0,pendTimerInterval=null; // 振り子の練習時間（0=なし）
 
 // ── Wake Lock ──
 var wakeLock=null;
@@ -336,15 +335,7 @@ function renderDots(phase,filled){
   }
 }
 function updateProgress(){
-  var lbl=document.getElementById('progress-lbl');
-  if(pracMode==='rounds'){
-    lbl.textContent='Round '+(currentRound+1)+' / '+pracVal;
-  }else{
-    var rem=Math.max(0,pracVal*60-(Date.now()-startTime)/1000);
-    var m=Math.floor(rem/60),s=Math.floor(rem%60);
-    lbl.textContent='残り '+m+':'+(s<10?'0':'')+s;
-    if(rem<=0)completePractice();
-  }
+  document.getElementById('progress-lbl').textContent='Round '+(currentRound+1)+' / '+pracVal;
 }
 function onBeat(){
   beatInPhase++;playSound();
@@ -357,15 +348,13 @@ function onBeat(){
       currentPhase='out';
     } else {
       currentPhase='in';
-      if(pracMode==='rounds'){
-        if(breathingType==='nadi'){
-          cycleCount++;
-          if(cycleCount>=2){ cycleCount=0; currentRound++; }
-        } else {
-          currentRound++;
-        }
-        if(currentRound>=pracVal){completePractice();return;}
+      if(breathingType==='nadi'){
+        cycleCount++;
+        if(cycleCount>=2){ cycleCount=0; currentRound++; }
+      } else {
+        currentRound++;
       }
+      if(currentRound>=pracVal){completePractice();return;}
     }
     startPhase(currentPhase);
   }
@@ -378,7 +367,10 @@ function startPractice(){
   document.getElementById('phase-lbl').textContent='';
   setTimeout(function(){startPhase('in');beatTimer=setInterval(onBeat,60000/bpmO);},100);
 }
-function stopTimer(){if(beatTimer){clearInterval(beatTimer);beatTimer=null;}}
+function stopTimer(){
+  if(beatTimer){clearInterval(beatTimer);beatTimer=null;}
+  if(pendTimerInterval){clearInterval(pendTimerInterval);pendTimerInterval=null;}
+}
 function completePractice(){
   stopTimer();playing=false;releaseWakeLock();
   var btn=document.getElementById('play-btn');btn.classList.remove('stop');
@@ -390,6 +382,28 @@ function completePractice(){
   var orb=document.getElementById('a-orb');
   orb.style.transition='transform .8s ease-out,background-color .8s ease-out';
   orb.style.transform='scale(1)';orb.style.backgroundColor='#1E6F7A';
+}
+
+// ── 振り子タイマー ──
+function startPendTimer(){
+  startTime=Date.now();
+  var lbl=document.getElementById('pend-timer-lbl');
+  lbl.textContent='';
+  pendTimerInterval=setInterval(function(){
+    if(!playing){clearInterval(pendTimerInterval);pendTimerInterval=null;return;}
+    var rem=Math.max(0,pendTimeVal*60000-(Date.now()-startTime));
+    var m=Math.floor(rem/60000),s=Math.floor((rem%60000)/1000);
+    lbl.textContent='残り '+m+':'+(s<10?'0':'')+s;
+    if(rem<=0){
+      stopTimer();playing=false;releaseWakeLock();
+      var btn=document.getElementById('play-btn');
+      btn.classList.remove('stop');
+      document.getElementById('play-icon').textContent='▶';
+      document.getElementById('play-txt').textContent='スタート';
+      document.getElementById('pend-group').style.transform='rotate(0deg)';
+      lbl.textContent='お疲れ様でした🌿';
+    }
+  },500);
 }
 
 // ── プレイボタン ──
@@ -413,6 +427,7 @@ function handlePlayStart(){
         document.getElementById('pend-group').style.transitionDuration=dur;
         pendRight=false;swingPendulum();
         beatTimer=setInterval(swingPendulum,60000/bpmP);
+        if(pendTimeVal>0)startPendTimer();
       }else{
         startPractice();
       }
@@ -425,6 +440,7 @@ function handlePlayStart(){
     stopTimer();releaseWakeLock();
     if(mode==='pendulum'){
       document.getElementById('pend-group').style.transform='rotate(0deg)';
+      document.getElementById('pend-timer-lbl').textContent='';
     }
   }
 }
@@ -474,23 +490,26 @@ document.getElementById('out-plus').addEventListener('click',function(){if(!play
 function setSound(s){sound=s;document.querySelectorAll('.snd').forEach(function(b){b.classList.toggle('active',b.dataset.sound===s);});}
 document.querySelectorAll('.snd').forEach(function(btn){btn.addEventListener('click',function(){setSound(this.dataset.sound);});});
 
-// ── 練習モード ──
-document.getElementById('prac-time-btn').addEventListener('click',function(){
-  pracMode='time';pracVal=1;
-  this.classList.add('active');document.getElementById('prac-round-btn').classList.remove('active');
-  document.getElementById('time-opts').style.display='flex';document.getElementById('round-opts').style.display='none';
-  document.getElementById('breath-type-wrap').style.display='none';
-  document.querySelectorAll('#time-opts .prac-opt').forEach(function(b,i){b.classList.toggle('active',i===0);});
-});
-document.getElementById('prac-round-btn').addEventListener('click',function(){
-  pracMode='rounds';pracVal=5;
-  this.classList.add('active');document.getElementById('prac-time-btn').classList.remove('active');
-  document.getElementById('round-opts').style.display='flex';document.getElementById('time-opts').style.display='none';
-  document.getElementById('breath-type-wrap').style.display='block';
-  document.querySelectorAll('#round-opts .prac-opt').forEach(function(b,i){b.classList.toggle('active',i===0);});
+// ── 振り子の練習時間 ──
+document.querySelectorAll('#pend-time-opts .prac-opt').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    pendTimeVal=parseInt(this.dataset.val);
+    document.querySelectorAll('#pend-time-opts .prac-opt').forEach(function(b){b.classList.remove('active');});
+    this.classList.add('active');
+    document.getElementById('pend-timer-lbl').textContent='';
+  });
 });
 
-// 呼吸タイプ切替
+// ── 呼吸ガイドのラウンド数 ──
+document.querySelectorAll('#round-opts .prac-opt').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    pracVal=parseInt(this.dataset.val);
+    document.querySelectorAll('#round-opts .prac-opt').forEach(function(b){b.classList.remove('active');});
+    this.classList.add('active');
+  });
+});
+
+// ── 呼吸タイプ切替 ──
 document.getElementById('type-normal').addEventListener('click',function(){
   breathingType='normal';
   this.classList.add('active');document.getElementById('type-nadi').classList.remove('active');
@@ -498,12 +517,6 @@ document.getElementById('type-normal').addEventListener('click',function(){
 document.getElementById('type-nadi').addEventListener('click',function(){
   breathingType='nadi';
   this.classList.add('active');document.getElementById('type-normal').classList.remove('active');
-});
-document.querySelectorAll('#time-opts .prac-opt').forEach(function(btn){
-  btn.addEventListener('click',function(){pracVal=parseInt(this.dataset.val);document.querySelectorAll('#time-opts .prac-opt').forEach(function(b){b.classList.remove('active');});this.classList.add('active');});
-});
-document.querySelectorAll('#round-opts .prac-opt').forEach(function(btn){
-  btn.addEventListener('click',function(){pracVal=parseInt(this.dataset.val);document.querySelectorAll('#round-opts .prac-opt').forEach(function(b){b.classList.remove('active');});this.classList.add('active');});
 });
 
 // ライブラリから来た場合はBPM・拍数を自動セット
