@@ -266,19 +266,6 @@ function initNav(activeId) {
   });
 }
 
-// ── 時計表示 ────────────────────────────────────────────────
-function startClock(elId) {
-  var el = document.getElementById(elId);
-  if (!el) return;
-  function tick() {
-    var t = new Date();
-    el.textContent =
-      String(t.getHours()).padStart(2, '0') + ':' +
-      String(t.getMinutes()).padStart(2, '0');
-  }
-  tick();
-  setInterval(tick, 10000);
-}
 
 // ── 新月到来チェック（ページロード時に実行） ───────────────────
 function checkNewMoonTransition() {

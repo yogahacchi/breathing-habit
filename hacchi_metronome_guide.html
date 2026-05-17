@@ -18,7 +18,6 @@
 }
 html,body{width:100%;min-height:100vh;background:#EEEBE4;font-family:'Noto Serif JP',serif;-webkit-font-smoothing:antialiased;}
 .phone{width:100%;max-width:480px;min-height:100vh;margin:0 auto;background:var(--cream);}
-.status{display:flex;justify-content:space-between;padding:calc(env(safe-area-inset-top,14px)+4px) 24px 0;font-family:'Cormorant Garamond',serif;font-size:12px;color:var(--ink3);}
 .art-header{background:var(--teal-d);padding:16px 24px 22px;}
 .art-back{font-size:13px;color:#A8D8DE;margin-bottom:12px;cursor:pointer;display:inline-block;touch-action:manipulation;}
 .art-eyebrow{font-size:10px;color:#A8D8DE;letter-spacing:.1em;margin-bottom:6px;}
@@ -79,7 +78,7 @@ html,body{width:100%;min-height:100vh;background:#EEEBE4;font-family:'Noto Serif
 <body>
 <div class="phone">
 
-  <div class="status"><span id="st">9:41</span><span>◼◼◼</span></div>
+
 
   <div class="art-header">
     <div class="art-back" onclick="history.back()">← 練習へ戻る</div>
@@ -241,12 +240,8 @@ function show(idx, btn) {
   btn.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
   window.scrollTo({top:0,behavior:'smooth'});
 }
-function tick(){
-  var t=new Date();
-  document.getElementById('st').textContent=
     String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
 }
-tick(); setInterval(tick,10000);
 </script>
 </body>
 </html>
